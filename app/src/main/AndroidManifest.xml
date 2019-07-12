@@ -18,11 +18,6 @@
 
         </activity>
 
-        <activity
-            android:name=".Activities.ProfileActivity"
-            android:label="@string/title_activity_profile">
-        </activity>
-
         <activity android:name="net.openid.appauth.RedirectUriReceiverActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

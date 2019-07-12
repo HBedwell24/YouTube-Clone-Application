@@ -10,12 +10,11 @@
     <item android:id="@+id/login"
         android:title="Sign In"
         app:showAsAction="always"
-        app:actionViewClass="android.widget.Button" />
+        android:visible="false" />
 
     <item android:id="@+id/logout"
         android:title="Logout"
         android:icon="@drawable/ic_logout_24dp"
         app:showAsAction="always"
-        app:actionViewClass="de.hdodenhof.circleimageview.CircleImageView"
         android:visible="false" />
 </menu>

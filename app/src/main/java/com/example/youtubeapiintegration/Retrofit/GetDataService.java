@@ -13,6 +13,7 @@ public interface GetDataService {
     @GET("search")
     Call<VideoDetails> getVideoDetails(
             @Query("part") String part,
+            @Query("channelId") String channelId,
             @Query("q") String q,
             @Query("key") String key,
             @Query("order") String order,

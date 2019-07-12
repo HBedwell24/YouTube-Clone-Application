@@ -65,7 +65,7 @@ public class AuthorizationActivity extends AppCompatActivity {
         mGuest = (MaterialButton) findViewById(R.id.bGuest);
         mGuest.setOnClickListener(new MaterialButton.OnClickListener() {
             public void onClick(View view) {
-                Intent intent = new Intent(AuthorizationActivity.this, ProfileActivity.class);
+                Intent intent = new Intent(AuthorizationActivity.this, AuthenticationActivity.class);
                 startActivity(intent);
             }
         });
@@ -132,7 +132,7 @@ public class AuthorizationActivity extends AppCompatActivity {
 
         if (mAuthState != null && mAuthState.isAuthorized()) {
 
-            Intent intent = new Intent(AuthorizationActivity.this, ProfileActivity.class);
+            Intent intent = new Intent(AuthorizationActivity.this, AuthenticationActivity.class);
             startActivity(intent);
         }
     }
@@ -165,7 +165,7 @@ public class AuthorizationActivity extends AppCompatActivity {
                             persistAuthState(authState);
                             Log.i(LOG_TAG, String.format("Token Response [ Access Token: %s, ID Token: %s ]", tokenResponse.accessToken, tokenResponse.idToken));
 
-                            Intent intent = new Intent(AuthorizationActivity.this, ProfileActivity.class);
+                            Intent intent = new Intent(AuthorizationActivity.this, AuthenticationActivity.class);
                             startActivity(intent);
                         }
                     }
