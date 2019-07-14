@@ -5,4 +5,10 @@
     <string name="restrictions_pending_block_user">This application is waiting for further configuration details and cannot continue
         to run. Please contact your IT admin for further details</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string-array name="query_suggestions">
+        <item>Furniture</item>
+        <item>Services</item>
+        <item>Real Estate</item>
+        <item>Pet Care</item>
+    </string-array>
 </resources>

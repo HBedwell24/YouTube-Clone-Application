@@ -14,8 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".Activities.AuthenticationActivity">
-
+        <activity android:name=".Activities.AuthenticationActivity"
+            android:theme="@style/AuthorizationTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
 
         <activity android:name="net.openid.appauth.RedirectUriReceiverActivity">
@@ -36,15 +41,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".Activities.AuthorizationActivity"
-            android:theme="@style/AuthorizationTheme">
-            <intent-filter>
-                <action android:name="com.google.codelabs.appauth.HANDLE_AUTHORIZATION_RESPONSE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        
         <activity android:name=".Video" />
 
         <meta-data

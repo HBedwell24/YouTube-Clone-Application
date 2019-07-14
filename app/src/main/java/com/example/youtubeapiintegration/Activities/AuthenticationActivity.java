@@ -1,6 +1,7 @@
 package com.example.youtubeapiintegration.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,9 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
@@ -37,8 +36,10 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -61,6 +62,10 @@ public class AuthenticationActivity extends AppCompatActivity {
     private MenuItem login;
     private MenuItem logout;
     private RecyclerView recyclerView;
+
+    private MaterialSearchView materialSearchView;
+    private Toolbar toolbar;
+
     private VideoDetailsAdapter videoDetailsAdapter;
     private final String TAG = AuthenticationActivity.class.getSimpleName();
 
@@ -74,7 +79,36 @@ public class AuthenticationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_authentication);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        materialSearchView = (MaterialSearchView) findViewById(R.id.search);
+        materialSearchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
+        materialSearchView.setEllipsize(true);
+        materialSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        materialSearchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+            }
+        });
 
         // enable logging
         Logger.getLogger("com.google.api.client").setLevel(LOGGING_LEVEL);
@@ -89,61 +123,65 @@ public class AuthenticationActivity extends AppCompatActivity {
                 transport, jsonFactory, credential).setApplicationName(getBaseContext().getString(R.string.app_name))
                 .build();
 
-        // Create an AsyncTask to handle the retrieving of subscription data
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-
-                try {
-                    YouTube.Subscriptions.List subscriptionList = client.subscriptions().list("snippet").setMine(true).setMaxResults(50L).setKey(API_KEY);
-                    SubscriptionListResponse response = subscriptionList.execute();
-                    java.util.List<Subscription> subscriptions = response.getItems();
-                    for (Subscription subscription : subscriptions) {
-                        String channelId = subscription.getSnippet().getChannelId();
-                        Call<VideoDetails> videoDetailsRequest = dataService
-                                .getVideoDetails("snippet", channelId, handleIntent(getIntent()), API_KEY, "date", 5);
-                    }
-                }
-                catch (UserRecoverableAuthIOException e) {
-                    startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        };
-        task.execute();
-
         recyclerView = findViewById(R.id.recyclerview);
 
-        GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<VideoDetails> videoDetailsRequest = dataService
-                .getVideoDetails("snippet", handleIntent(getIntent()), API_KEY, "relevance", 25);
+        new subscriptionRequestTask(this).execute();
+    }
 
-        videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
+    private class subscriptionRequestTask extends AsyncTask<Void, Void, Void> {
 
-            @Override
-            public void onResponse(Call<VideoDetails> call, Response<VideoDetails> response) {
-                if(response.isSuccessful()) {
+        private WeakReference<AuthenticationActivity> activityWeakReference;
 
-                    if(response.body() != null) {
-                        Log.e(TAG, "Response Successful");
-                        Toast.makeText(AuthenticationActivity.this, "Loading...", Toast.LENGTH_LONG).show();
-                        setUpRecyclerView(response.body().getItems());
-                    }
+        subscriptionRequestTask(AuthenticationActivity authenticationActivity) {
+            activityWeakReference = new WeakReference<>(authenticationActivity);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+
+            try {
+                YouTube.Subscriptions.List subscriptionList = client.subscriptions().list("snippet").setMine(true).setMaxResults(50L).setKey(API_KEY);
+                SubscriptionListResponse response = subscriptionList.execute();
+                java.util.List<Subscription> subscriptions = response.getItems();
+
+                for (Subscription subscription : subscriptions) {
+                    String channelId = subscription.getSnippet().getChannelId();
+                    Call<VideoDetails> videoDetailsRequest = dataService
+                            .getVideoDetails("snippet", channelId, handleIntent(getIntent()), API_KEY, "date", 2);
+                    videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
+
+                        @Override
+                        public void onResponse(Call<VideoDetails> call, Response<VideoDetails> response) {
+                            if(response.isSuccessful()) {
+
+                                if(response.body() != null) {
+                                    Log.e(TAG, "Response Successful");
+                                    Toast.makeText(AuthenticationActivity.this, "Loading...", Toast.LENGTH_LONG).show();
+                                    setUpRecyclerView(response.body().getItems());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<VideoDetails> call, Throwable t) {
+                            Toast.makeText(AuthenticationActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+                            Log.e(TAG.concat("API Request Failed"), t.getMessage());
+                        }
+                    });
                 }
             }
 
-            @Override
-            public void onFailure(Call<VideoDetails> call, Throwable t) {
-                Toast.makeText(AuthenticationActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG.concat("API Request Failed"), t.getMessage());
+            catch (UserRecoverableAuthIOException e) {
+                startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
             }
-        });
+
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
@@ -205,13 +243,9 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
-
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        MenuItem item = menu.findItem(R.id.search);
+        materialSearchView.setMenuItem(item);
 
         login = menu.findItem(R.id.login);
         logout = menu.findItem(R.id.logout);
@@ -225,7 +259,7 @@ public class AuthenticationActivity extends AppCompatActivity {
             login.setVisible(true);
             logout.setVisible(false);
         }
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -249,8 +283,28 @@ public class AuthenticationActivity extends AppCompatActivity {
                 logout.setVisible(false);
                 login.setVisible(true);
                 return true;
+
+            case R.id.search:
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (materialSearchView.isSearchOpen()) {
+            materialSearchView.closeSearch();
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
     }
 
     private void logOutOfAccount() {
@@ -260,12 +314,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
-    }
-
-    private String handleIntent(Intent intent) {
+    private static String handleIntent(Intent intent) {
 
         String query = null;
 

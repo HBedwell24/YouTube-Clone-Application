@@ -44,6 +44,8 @@ dependencies {
     implementation 'com.google.apis:google-api-services-youtube:v3-rev212-1.25.0'
     implementation 'com.google.http-client:google-http-client-gson:1.19.0'
     implementation 'net.openid:appauth:0.2.0'
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+    implementation 'de.hdodenhof:circleimageview:1.2.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
