@@ -8,25 +8,4 @@
         android:title="Search"
         app:showAsAction="ifRoom|collapseActionView" />
 
-    <item android:id="@+id/menu"
-        android:icon="@drawable/ic_more_vert_white_24dp"
-        android:orderInCategory="150"
-        android:title="Options"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/settings"
-                android:icon="@drawable/baseline_settings_white_24dp"
-                android:title="Settings" />
-            <item
-                android:id="@+id/login"
-                android:title="Login"
-                android:visible="false" />
-            <item
-                android:id="@+id/logout"
-                android:icon="@drawable/ic_logout_24dp"
-                android:title="Logout"
-                android:visible="false" />
-        </menu>
-    </item>
 </menu>

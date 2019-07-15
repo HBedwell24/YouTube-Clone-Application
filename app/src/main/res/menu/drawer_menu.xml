@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_trending"
+            android:icon="@drawable/baseline_trending_up_white_24dp"
+            android:title="Trending" />
+        <item
+            android:id="@+id/nav_subscriptions"
+            android:icon="@drawable/baseline_subscriptions_white_24dp"
+            android:title="Subscriptions" />
+    </group>
+
+    <item android:title="Account">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/baseline_settings_white_24dp"
+                android:title="Settings" />
+            <item
+                android:id="@+id/nav_login"
+                android:title="Sign In"
+                android:visible="false" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_logout_24dp"
+                android:title="Logout" />
+        </menu>
+    </item>
+</menu>

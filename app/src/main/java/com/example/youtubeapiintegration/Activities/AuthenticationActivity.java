@@ -1,7 +1,10 @@
 package com.example.youtubeapiintegration.Activities;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -62,6 +65,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     private MenuItem login;
     private MenuItem logout;
     private RecyclerView recyclerView;
+    private DrawerLayout drawer;
 
     private MaterialSearchView materialSearchView;
     private Toolbar toolbar;
@@ -83,6 +87,12 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
         materialSearchView = (MaterialSearchView) findViewById(R.id.search);
         materialSearchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
@@ -247,17 +257,17 @@ public class AuthenticationActivity extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.search);
         materialSearchView.setMenuItem(item);
 
-        login = menu.findItem(R.id.login);
-        logout = menu.findItem(R.id.logout);
+        //login = menu.findItem(R.id.login);
+        //logout = menu.findItem(R.id.logout);
 
         if (credential.getSelectedAccountName() != null) {
-            login.setVisible(false);
-            logout.setVisible(true);
+            //login.setVisible(false);
+            //logout.setVisible(true);
         }
 
         else {
-            login.setVisible(true);
-            logout.setVisible(false);
+            //login.setVisible(true);
+            //logout.setVisible(false);
         }
         return true;
     }
@@ -270,7 +280,7 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
 
-            case R.id.login:
+            /*case R.id.login:
                 chooseAccount();
                 if (value != null) {
                     logout.setVisible(true);
@@ -282,7 +292,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                 logOutOfAccount();
                 logout.setVisible(false);
                 login.setVisible(true);
-                return true;
+                return true;*/
 
             case R.id.search:
                 return true;
@@ -296,6 +306,9 @@ public class AuthenticationActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (materialSearchView.isSearchOpen()) {
             materialSearchView.closeSearch();
+        }
+        else if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         }
         else {
             super.onBackPressed();
