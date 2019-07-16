@@ -25,10 +25,6 @@
                 android:icon="@drawable/baseline_settings_white_24dp"
                 android:title="Settings" />
             <item
-                android:id="@+id/nav_login"
-                android:title="Sign In"
-                android:visible="false" />
-            <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout_24dp"
                 android:title="Logout" />
