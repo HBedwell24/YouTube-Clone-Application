@@ -1,5 +1,6 @@
 package com.example.youtubeapiintegration.Retrofit;
 
+import com.example.youtubeapiintegration.Models.Comments.Comment;
 import com.example.youtubeapiintegration.Models.UserSubscriptions.UserSubscriptions;
 import com.example.youtubeapiintegration.Models.VideoDetails;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
@@ -25,6 +26,14 @@ public interface GetDataService {
             @Query("part") String part,
             @Query("key") String key,
             @Query("id") String id
+    );
+
+    @GET("commentThreads")
+    Call<Comment.Model> getCommentsData(
+            @Query("part") String part,
+            @Query("videoId") String videoId,
+            @Query("maxResults") int maxResults,
+            @Query("key") String key
     );
 
     @GET("subscriptions")

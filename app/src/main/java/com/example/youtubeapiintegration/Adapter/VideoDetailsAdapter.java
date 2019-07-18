@@ -66,6 +66,7 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
             public void onClick(View view) {
                 Intent intent = new Intent(context, Video.class);
                 intent.putExtra("videoID", videoDetailsList.get(position).getId().getVideoId());
+                intent.putExtra("videoTitle", videoDetailsList.get(position).getSnippet().getTitle());
                 context.startActivity(intent);
             }
         });
