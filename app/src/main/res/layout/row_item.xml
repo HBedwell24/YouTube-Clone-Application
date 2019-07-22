@@ -1,29 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="#E3E3E3"
-    android:layout_height="wrap_content">
+    android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/cardItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:elevation="1dp"
-        card_view:cardBackgroundColor="	#FDFDFD"
-        card_view:cardElevation="1dp"
-        card_view:cardMaxElevation="1dp"
-        card_view:cardCornerRadius="5dp"
-        card_view:cardUseCompatPadding="true"
-        card_view:cardPreventCornerOverlap="false">
+        card_view:cardBackgroundColor="@android:color/white"
+        card_view:cardCornerRadius="0dp"
+        card_view:cardPreventCornerOverlap="false"
+        card_view:cardUseCompatPadding="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -32,87 +24,91 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
-                app:srcCompat="@color/darkGrey"
-                app:layout_constraintDimensionRatio="H,16:9"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/title"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintDimensionRatio="H,16:9"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:srcCompat="@color/darkGrey" />
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Title"
-                android:fontFamily="sans-serif"
-                android:textStyle="bold"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="@android:color/black"
                 android:alpha="0.87"
-                app:layout_constraintTop_toBottomOf="@+id/thumbnail"
-                app:layout_constraintStart_toStartOf="parent"
+                android:fontFamily="sans-serif"
+                android:gravity=""
+                android:text="Title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@android:color/black"
+                android:textSize="22dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/channelTitle"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/channelTitle" />
+                app:layout_constraintStart_toStartOf="parent"
+
+                app:layout_constraintTop_toBottomOf="@+id/thumbnail" />
 
             <TextView
                 android:id="@+id/channelTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="12dp"
+                android:alpha="0.60"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
                 android:text="Author"
-                android:gravity="center_vertical"
-                android:drawableLeft="@drawable/ic_person_white_24dp"
-                android:drawablePadding="8dp"
-                android:fontFamily="sans-serif"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@android:color/black"
-                android:alpha="0.60"
-                app:layout_constraintTop_toBottomOf="@+id/title"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <TextView
-                android:id="@+id/publishedAt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:drawableLeft="@drawable/ic_access_time_white_24dp"
-                android:drawablePadding="8dp"
-                android:text="Date"
-                android:gravity="center_vertical"
-                android:fontFamily="sans-serif"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@android:color/black"
-                android:alpha="0.60"
+                android:textSize="16dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/channelTitle"
-                app:layout_constraintBottom_toTopOf="@+id/description"/>
+                app:layout_constraintTop_toBottomOf="@+id/title" />
 
             <TextView
                 android:id="@+id/description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="26dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="24dp"
-                android:lineSpacingExtra="8dp"
-                android:text="Description"
+                android:layout_marginBottom="16dp"
+                android:alpha="0.60"
                 android:fontFamily="sans-serif"
+                android:lineSpacingExtra="6dp"
+                android:text="Description"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@android:color/black"
-                android:alpha="0.60"
-                app:layout_constraintTop_toBottomOf="@id/publishedAt"
-                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/channelTitle" />
+
+            <TextView
+                android:id="@+id/publishedAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:alpha="0.60"
+                android:drawableLeft="@drawable/ic_access_time_white_24dp"
+                android:drawablePadding="8dp"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:text="Date"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@android:color/black"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/description" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

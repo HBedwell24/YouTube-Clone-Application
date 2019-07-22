@@ -1,6 +1,7 @@
 package com.example.youtubeapiintegration;
 
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -8,11 +9,8 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.youtubeapiintegration.Activities.ProfileActivity;
 import com.example.youtubeapiintegration.Adapter.CommentsAdapter;
-import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
 import com.example.youtubeapiintegration.Models.Comments.Comment;
-import com.example.youtubeapiintegration.Models.Item;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 import com.example.youtubeapiintegration.Retrofit.GetDataService;
 import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
@@ -24,6 +22,9 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,6 +38,8 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
     TextView views, likes, dislikes, commentsSize, videoTitle;
     RecyclerView recyclerViewComments;
     CommentsAdapter commentsAdapter;
+
+    private static final String API_KEY = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,7 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         else {
             Log.e("Video ID is invalid", videoID.concat(" "));
         }
-        playerView.initialize("", this);
+        playerView.initialize(API_KEY, this);
         getStats();
         getCommentsData();
     }
@@ -75,14 +78,14 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
 
     private void getCommentsData() {
         GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<Comment.Model> commentsRequest = dataService.getCommentsData("snippet,replies", videoID, 25, "");
+        Call<Comment.Model> commentsRequest = dataService.getCommentsData("snippet,replies", videoID, 25, null, API_KEY);
 
         commentsRequest.enqueue(new Callback<Comment.Model>() {
             @Override
             public void onResponse(Call<Comment.Model> call, Response<Comment.Model> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        commentsSize.setText(response.body().getItems().size() + " Comments");
+                        commentsSize.setText(Html.fromHtml("<b>Comments </b>" + response.body().getItems().size()));
                         Log.e("TAG", "Response Successful");
                         setUpRecyclerView(response.body().getItems());
                     }
@@ -104,9 +107,40 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         });
     }
 
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+
+    static {
+        suffixes.put(1_000L, "k");
+        suffixes.put(1_000_000L, "M");
+        suffixes.put(1_000_000_000L, "G");
+        suffixes.put(1_000_000_000_000L, "T");
+        suffixes.put(1_000_000_000_000_000L, "P");
+        suffixes.put(1_000_000_000_000_000_000L, "E");
+    }
+
+    public static String format(long value) {
+
+        if (value == Long.MIN_VALUE)
+            return format(Long.MIN_VALUE + 1);
+
+        if (value < 0)
+            return "-" + format(-value);
+
+        if (value < 1000)
+            return Long.toString(value); //deal with easy case
+
+        Map.Entry<Long, String> e = suffixes.floorEntry(value);
+        Long divideBy = e.getKey();
+        String suffix = e.getValue();
+
+        long truncated = value / (divideBy / 10); //the number part of the output times 10
+        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
+    }
+
     private void getStats() {
         GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<VideoStats> videoStatsRequest = dataService.getVideoStats("statistics", "", videoID);
+        Call<VideoStats> videoStatsRequest = dataService.getVideoStats("statistics", API_KEY, videoID, 1);
         videoStatsRequest.enqueue(new Callback<VideoStats>() {
 
             @Override
@@ -115,8 +149,8 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
                     if (response.body() != null) {
                         int number = Integer.parseInt(response.body().getItems().get(0).getStatistics().getViewCount());
                         views.setText(NumberFormat.getNumberInstance(Locale.US).format(number).concat(" views"));
-                        likes.setText(response.body().getItems().get(0).getStatistics().getLikeCount());
-                        dislikes.setText((response.body().getItems().get(0).getStatistics().getDislikeCount()));
+                        likes.setText(format(Long.parseLong(response.body().getItems().get(0).getStatistics().getLikeCount())));
+                        dislikes.setText((format(Long.parseLong(response.body().getItems().get(0).getStatistics().getDislikeCount()))));
                     }
                     else {
                         Log.e(">>>> RESPONSE BODY NULL", "NULL");

@@ -13,7 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.youtubeapiintegration.Models.Item;
+import com.example.youtubeapiintegration.Models.VideoStats.Item;
+import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.Video;
 
@@ -24,39 +25,39 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapter.VideoDetailsViewHolder> {
+public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.VideoStatsViewHolder> {
 
     private Context context;
-    private List<Item> videoDetailsList;
+    private List<Item> videoStatsList;
     private String convertedDate;
 
-    public VideoDetailsAdapter(Context context, List<Item> videoDetailsList) {
+    public VideoStatsAdapter(Context context, List<Item> videoStatsList) {
         this.context = context;
-        this.videoDetailsList = videoDetailsList;
+        this.videoStatsList = videoStatsList;
     }
 
     @NonNull
     @Override
-    public VideoDetailsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public VideoStatsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.row_item, parent, false);
-        return new VideoDetailsViewHolder(view);
+        return new VideoStatsViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VideoDetailsViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull VideoStatsViewHolder holder, final int position) {
 
-        String data = videoDetailsList.get(position).getSnippet().getTitle();
+        String data = videoStatsList.get(position).getSnippet().getTitle();
         data = data.replace("&amp;", "&");
         data = data.replace("&#39;", "'");
         data = data.replace("&quot;", "'");
 
         holder.title.setText(data);
-        holder.channelTitle.setText("by " + videoDetailsList.get(position).getSnippet().getChannelTitle());
-        holder.publishedAt.setText(convertTimestamp(videoDetailsList.get(position).getSnippet().getPublishedAt()));
-        holder.description.setText(videoDetailsList.get(position).getSnippet().getDescription());
+        holder.channelTitle.setText(videoStatsList.get(position).getSnippet().getChannelTitle());
+        holder.publishedAt.setText(convertTimestamp(videoStatsList.get(position).getSnippet().getPublishedAt()));
+        holder.description.setText(videoStatsList.get(position).getSnippet().getDescription());
 
         Glide.with(context)
-                .load(videoDetailsList
+                .load(videoStatsList
                         .get(position)
                         .getSnippet().getThumbnails().getHigh().getUrl())
                 .into(holder.thumbnail);
@@ -65,8 +66,9 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, Video.class);
-                intent.putExtra("videoID", videoDetailsList.get(position).getId().getVideoId());
-                intent.putExtra("videoTitle", videoDetailsList.get(position).getSnippet().getTitle());
+                intent.putExtra("videoID", videoStatsList.get(position).getId());
+                intent.putExtra("videoTitle", videoStatsList.get(position).getSnippet().getTitle());
+                intent.putExtra("description", videoStatsList.get(position).getSnippet().getDescription());
                 context.startActivity(intent);
             }
         });
@@ -87,16 +89,16 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
 
     @Override
     public int getItemCount() {
-        return videoDetailsList.size();
+        return videoStatsList.size();
     }
 
-    public class VideoDetailsViewHolder extends RecyclerView.ViewHolder {
+    public class VideoStatsViewHolder extends RecyclerView.ViewHolder {
 
         private TextView channelTitle;
         private TextView publishedAt, title, description;
         private ImageView thumbnail;
 
-        public VideoDetailsViewHolder(View itemView) {
+        public VideoStatsViewHolder(View itemView) {
             super(itemView);
 
             channelTitle = itemView.findViewById(R.id.channelTitle);
@@ -107,3 +109,4 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
         }
     }
 }
+

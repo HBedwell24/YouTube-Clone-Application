@@ -1,5 +1,6 @@
 package com.example.youtubeapiintegration.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -7,6 +8,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -20,29 +22,44 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
-import com.example.youtubeapiintegration.Models.Item;
+import com.example.youtubeapiintegration.Adapter.VideoStatsAdapter;
 import com.example.youtubeapiintegration.Models.VideoDetails;
+import com.example.youtubeapiintegration.Models.VideoStats.Item;
+import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.Retrofit.GetDataService;
 import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.material.navigation.NavigationView;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
+import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -52,7 +69,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SubscriptionsActivity extends AppCompatActivity {
+public class SubscriptionsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final Level LOGGING_LEVEL = Level.OFF;
     private static final String PREF_ACCOUNT_NAME = "accountName";
@@ -62,15 +79,18 @@ public class SubscriptionsActivity extends AppCompatActivity {
     static final int REQUEST_AUTHORIZATION = 1;
     static final int REQUEST_ACCOUNT_PICKER = 2;
 
-    private MenuItem login;
-    private MenuItem logout;
     private RecyclerView recyclerView;
     private DrawerLayout drawer;
+    private NavigationView navigationView;
+    private View header;
+    private ImageView profilePicture;
+    private TextView username, email;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private MaterialSearchView materialSearchView;
     private Toolbar toolbar;
 
-    private VideoDetailsAdapter videoDetailsAdapter;
+    private VideoStatsAdapter videoStatsAdapter;
     private final String TAG = AuthenticationActivity.class.getSimpleName();
 
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -83,12 +103,27 @@ public class SubscriptionsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_authentication);
+        setContentView(R.layout.activity_subscriptions);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        if (savedInstanceState == null) {
+            navigationView.setCheckedItem(R.id.nav_home);
+        }
+
+        header = navigationView.getHeaderView(0);
+        profilePicture = header.findViewById(R.id.profile_pic);
+        username = header.findViewById(R.id.username);
+        email = header.findViewById(R.id.email);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -124,7 +159,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
         Logger.getLogger("com.google.api.client").setLevel(LOGGING_LEVEL);
 
         // create OAuth credentials using the selected account name
-        credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(YouTubeScopes.YOUTUBE_READONLY));
+        credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(YouTubeScopes.YOUTUBE_FORCE_SSL));
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
         credential.setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
 
@@ -135,61 +170,153 @@ public class SubscriptionsActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerview);
 
-        new subscriptionRequestTask(this).execute();
+        if (credential.getSelectedAccount() != null) {
+            setUpRefreshListener();
+            new subscriptionRequestTask(SubscriptionsActivity.this).execute();
+        }
+        else {
+            chooseAccount();
+            if (credential.getSelectedAccount() != null) {
+                setUpRefreshListener();
+                new subscriptionRequestTask(SubscriptionsActivity.this).execute();
+            }
+        }
+
+
+    }
+
+    private void setUpRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                new subscriptionRequestTask(SubscriptionsActivity.this).execute();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        Intent navigationIntent;
+
+        switch (item.getItemId()) {
+
+            case R.id.nav_home:
+                navigationIntent = new Intent(this, ProfileActivity.class);
+                startActivity(navigationIntent);
+                break;
+
+            case R.id.nav_trending:
+                break;
+
+            case R.id.nav_subscriptions:
+                navigationIntent = new Intent(this, SubscriptionsActivity.class);
+                startActivity(navigationIntent);
+                break;
+
+            case R.id.nav_settings:
+                break;
+
+            case R.id.nav_logout:
+                logOutOfAccount();
+                navigationIntent = new Intent(this, AuthenticationActivity.class);
+                startActivity(navigationIntent);
+                break;
+        }
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     private class subscriptionRequestTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<SubscriptionsActivity> activityWeakReference;
 
-        subscriptionRequestTask(SubscriptionsActivity subscriptionsActivity) {
-            activityWeakReference = new WeakReference<>(subscriptionsActivity);
+        subscriptionRequestTask(SubscriptionsActivity subscriptionActivity) {
+            activityWeakReference = new WeakReference<>(subscriptionActivity);
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
 
-            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-
             try {
-                YouTube.Subscriptions.List subscriptionList = client.subscriptions().list("snippet").setMine(true).setMaxResults(50L).setKey(API_KEY);
+                YouTube.Subscriptions.List subscriptionList = client.subscriptions().list("snippet").
+                        setOauthToken(credential.getToken()).setMaxResults(25L).setMine(true).setKey(API_KEY);
                 SubscriptionListResponse response = subscriptionList.execute();
                 java.util.List<Subscription> subscriptions = response.getItems();
 
+                String publishedAfter = LocalDate.now().minusDays(2).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
+                DateTime date = DateTime.parseRfc3339(publishedAfter);
+
+                //SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+
+                final ArrayList<String> videoIdList = new ArrayList<>();
+
                 for (Subscription subscription : subscriptions) {
-                    String channelId = subscription.getSnippet().getChannelId();
-                    Call<VideoDetails> videoDetailsRequest = dataService
-                            .getVideoDetails("snippet", channelId, handleIntent(getIntent()), API_KEY, "date", 1);
-                    videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
 
-                        @Override
-                        public void onResponse(Call<VideoDetails> call, Response<VideoDetails> response) {
-                            if(response.isSuccessful()) {
+                    String channelId = subscription.getSnippet().getResourceId().getChannelId();
 
-                                if(response.body() != null) {
-                                    Log.e(TAG, "Response Successful");
-                                    Toast.makeText(SubscriptionsActivity.this, "Loading...", Toast.LENGTH_LONG).show();
-                                    setUpRecyclerView(response.body().getItems());
-                                }
+                    YouTube.Search.List channelSearch = client.search().list("snippet").setChannelId(channelId).
+                            setOauthToken(credential.getToken()).setPublishedAfter(date).setOrder("date").setKey(API_KEY);
+
+                    SearchListResponse channelSearchResponse = channelSearch.execute();
+
+                    java.util.List<SearchResult> searchs = channelSearchResponse.getItems();
+
+                    for (SearchResult search : searchs) {
+                        String videoId = search.getId().getVideoId();
+                        videoIdList.add(videoId);
+                    }
+                }
+                String videos = android.text.TextUtils.join(",", videoIdList);
+
+                GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+                Call<VideoStats> videoStatsRequest = dataService
+                        .getVideoStats("snippet", API_KEY, videos, 50);
+                videoStatsRequest.enqueue(new Callback<VideoStats>() {
+
+                    @Override
+                    public void onResponse(Call<VideoStats> call, Response<VideoStats> response) {
+                        if(response.isSuccessful()) {
+
+                            if(response.body() != null) {
+                                Log.e(TAG, "Response Successful");
+                                setUpVideoRecyclerView(response.body().getItems());
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                            else {
+                                swipeRefreshLayout.setRefreshing(false);
+                                Toast.makeText(SubscriptionsActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
                             }
                         }
-
-                        @Override
-                        public void onFailure(Call<VideoDetails> call, Throwable t) {
-                            Toast.makeText(SubscriptionsActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
-                            Log.e(TAG.concat("API Request Failed"), t.getMessage());
+                        else {
+                            swipeRefreshLayout.setRefreshing(true);
+                            Toast.makeText(SubscriptionsActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
                         }
-                    });
-                }
+                    }
+
+                    @Override
+                    public void onFailure(Call<VideoStats> call, Throwable t) {
+                        Toast.makeText(SubscriptionsActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e(TAG.concat("API Request Failed"), t.getMessage());
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
             }
 
-            catch (UserRecoverableAuthIOException e) {
+            catch (UserRecoverableAuthException e) {
                 startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
             }
 
             catch (IOException e) {
                 e.printStackTrace();
             }
+
+            catch (GoogleAuthException e) {
+                e.printStackTrace();
+            }
+
             return null;
         }
     }
@@ -229,7 +356,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
 
             case REQUEST_AUTHORIZATION:
                 if (resultCode == Activity.RESULT_OK) {
-                    // Insert code here
+                    //AsyncLoadTasks.run(this);
                 }
                 else {
                     chooseAccount();
@@ -245,6 +372,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.commit();
+                        //AsyncLoadTasks(this);
                     }
                 }
                 break;
@@ -279,20 +407,6 @@ public class SubscriptionsActivity extends AppCompatActivity {
         String value = settings.getString(PREF_ACCOUNT_NAME, "");
 
         switch (item.getItemId()) {
-
-            /*case R.id.login:
-                chooseAccount();
-                if (value != null) {
-                    logout.setVisible(true);
-                    login.setVisible(false);
-                }
-                return true;
-
-            case R.id.logout:
-                logOutOfAccount();
-                logout.setVisible(false);
-                login.setVisible(true);
-                return true;*/
 
             case R.id.search:
                 return true;
@@ -337,11 +451,11 @@ public class SubscriptionsActivity extends AppCompatActivity {
         return query;
     }
 
-    private void setUpRecyclerView(List<Item> items) {
-        videoDetailsAdapter = new VideoDetailsAdapter(SubscriptionsActivity.this, items);
+    private void setUpVideoRecyclerView(List<Item> items) {
+        videoStatsAdapter = new VideoStatsAdapter(SubscriptionsActivity.this, items);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(SubscriptionsActivity.this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(videoDetailsAdapter);
+        recyclerView.setAdapter(videoStatsAdapter);
     }
 
     /** Check that Google Play services APK is installed and up to date. */
@@ -359,7 +473,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
         // check if there is already an account selected
         if (credential.getSelectedAccountName() == null) {
             // ask user to choose account
-            chooseAccount();
+            // chooseAccount();
         }
         else {
             // Insert code here
@@ -368,10 +482,5 @@ public class SubscriptionsActivity extends AppCompatActivity {
 
     private void chooseAccount() {
         startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
-
-        if (credential.getSelectedAccountName() != null) {
-            logout.setVisible(true);
-            login.setVisible(false);
-        }
     }
 }

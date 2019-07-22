@@ -28,27 +28,34 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
+import com.example.youtubeapiintegration.Adapter.VideoStatsAdapter;
 import com.example.youtubeapiintegration.Models.Item;
 import com.example.youtubeapiintegration.Models.VideoDetails;
+import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.Retrofit.GetDataService;
 import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.material.navigation.NavigationView;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
+import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -79,6 +86,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private MaterialSearchView materialSearchView;
     private Toolbar toolbar;
 
+    private VideoStatsAdapter videoStatsAdapter;
     private VideoDetailsAdapter videoDetailsAdapter;
     private final String TAG = AuthenticationActivity.class.getSimpleName();
 
@@ -148,7 +156,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         Logger.getLogger("com.google.api.client").setLevel(LOGGING_LEVEL);
 
         // create OAuth credentials using the selected account name
-        credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(YouTubeScopes.YOUTUBE_READONLY));
+        credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(YouTubeScopes.YOUTUBE_FORCE_SSL));
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
         credential.setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
 
@@ -178,7 +186,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         swipeRefreshLayout.setRefreshing(true);
         GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
         Call<VideoDetails> videoDetailsRequest = dataService
-                .getVideoDetails("snippet", null, handleIntent(getIntent()), API_KEY, "relevance", 25);
+                .getVideoDetails("snippet", null, handleIntent(getIntent()), API_KEY, "relevance", 50);
         videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
 
             @Override
@@ -218,13 +226,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         switch (item.getItemId()) {
 
             case R.id.nav_home:
-                navigationIntent = new Intent(this, AuthenticationActivity.class);
+                navigationIntent = new Intent(this, ProfileActivity.class);
                 startActivity(navigationIntent);
                 break;
 
             case R.id.nav_trending:
-                navigationIntent = new Intent(this, AuthenticationActivity.class);
-                startActivity(navigationIntent);
                 break;
 
             case R.id.nav_subscriptions:
@@ -243,62 +249,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private class subscriptionRequestTask extends AsyncTask<Void, Void, Void> {
-
-        private WeakReference<AuthenticationActivity> activityWeakReference;
-
-        subscriptionRequestTask(AuthenticationActivity authenticationActivity) {
-            activityWeakReference = new WeakReference<>(authenticationActivity);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-
-            try {
-                YouTube.Subscriptions.List subscriptionList = client.subscriptions().list("snippet").setMine(true).setMaxResults(50L).setKey(API_KEY);
-                SubscriptionListResponse response = subscriptionList.execute();
-                java.util.List<Subscription> subscriptions = response.getItems();
-
-                for (Subscription subscription : subscriptions) {
-                    String channelId = subscription.getSnippet().getChannelId();
-                    Call<VideoDetails> videoDetailsRequest = dataService
-                            .getVideoDetails("snippet", channelId, handleIntent(getIntent()), API_KEY, "date", 1);
-                    videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
-
-                        @Override
-                        public void onResponse(Call<VideoDetails> call, Response<VideoDetails> response) {
-                            if(response.isSuccessful()) {
-
-                                if(response.body() != null) {
-                                    Log.e(TAG, "Response Successful");
-                                    Toast.makeText(ProfileActivity.this, "Loading...", Toast.LENGTH_LONG).show();
-                                    setUpRecyclerView(response.body().getItems());
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<VideoDetails> call, Throwable t) {
-                            Toast.makeText(ProfileActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
-                            Log.e(TAG.concat("API Request Failed"), t.getMessage());
-                        }
-                    });
-                }
-            }
-
-            catch (UserRecoverableAuthIOException e) {
-                startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
-            }
-
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
     }
 
     void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
@@ -336,7 +286,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
             case REQUEST_AUTHORIZATION:
                 if (resultCode == Activity.RESULT_OK) {
-                    // Insert code here
+                    //AsyncLoadTasks.run(this);
                 }
                 else {
                     chooseAccount();
@@ -352,6 +302,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.commit();
+                        //AsyncLoadTasks(this);
                     }
                 }
                 break;
@@ -452,7 +403,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         // check if there is already an account selected
         if (credential.getSelectedAccountName() == null) {
             // ask user to choose account
-            chooseAccount();
+            //chooseAccount();
         }
         else {
             // Insert code here
