@@ -3,6 +3,7 @@ package com.example.youtubeapiintegration;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +36,7 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
     Bundle bundle;
     String videoID;
     YouTubePlayerView playerView;
-    TextView views, likes, dislikes, commentsSize, videoTitle;
+    TextView views, likes, dislikes, commentsSize, videoTitle, videoDescription, descriptionDropDown;
     RecyclerView recyclerViewComments;
     CommentsAdapter commentsAdapter;
 
@@ -54,11 +55,28 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         likes = findViewById(R.id.likes);
         dislikes = findViewById(R.id.dislikes);
         videoTitle = findViewById(R.id.videoTitle);
+        videoDescription = findViewById(R.id.videoDescription);
+        descriptionDropDown = findViewById(R.id.descriptionDropDown);
+        descriptionDropDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (videoDescription.getVisibility() == View.GONE) {
+                    videoDescription.setVisibility(View.VISIBLE);
+                    descriptionDropDown.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_up_black_24dp, 0);
+                }
+                else {
+                    videoDescription.setVisibility(View.GONE);
+                    descriptionDropDown.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_down_black_24dp, 0);
+                }
+
+            }
+        });
 
         bundle = getIntent().getExtras();
         if (bundle != null) {
             videoID = bundle.getString("videoID");
             videoTitle.setText(bundle.getString("videoTitle"));
+            videoDescription.setText(bundle.getString("description"));
             Log.e("Youtube Video ID ", videoID);
         }
         else {
@@ -140,7 +158,7 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
 
     private void getStats() {
         GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<VideoStats> videoStatsRequest = dataService.getVideoStats("statistics", API_KEY, videoID, 1);
+        Call<VideoStats> videoStatsRequest = dataService.getVideoStats("statistics", null, null, API_KEY, videoID, 1);
         videoStatsRequest.enqueue(new Callback<VideoStats>() {
 
             @Override

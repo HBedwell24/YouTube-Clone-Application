@@ -25,6 +25,11 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
+            android:name=".Activities.TrendingActivity"
+            android:label="Trending"
+            android:theme="@style/ProfileTheme">
+        </activity>
+        <activity
             android:name=".Activities.SubscriptionsActivity"
             android:label="Subscriptions"
             android:theme="@style/ProfileTheme">

@@ -45,6 +45,8 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
     @Override
     public void onBindViewHolder(@NonNull VideoDetailsViewHolder holder, final int position) {
 
+        //holder.avatar_image.setText(videoDetailsList.get(position).getSnippet().)
+
         String data = videoDetailsList.get(position).getSnippet().getTitle();
         data = data.replace("&amp;", "&");
         data = data.replace("&#39;", "'");

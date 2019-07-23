@@ -246,10 +246,8 @@ public class SubscriptionsActivity extends AppCompatActivity implements Navigati
                 SubscriptionListResponse response = subscriptionList.execute();
                 java.util.List<Subscription> subscriptions = response.getItems();
 
-                String publishedAfter = LocalDate.now().minusDays(2).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
+                String publishedAfter = LocalDate.now().minusDays(3).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
                 DateTime date = DateTime.parseRfc3339(publishedAfter);
-
-                //SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
                 final ArrayList<String> videoIdList = new ArrayList<>();
 
@@ -273,7 +271,7 @@ public class SubscriptionsActivity extends AppCompatActivity implements Navigati
 
                 GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
                 Call<VideoStats> videoStatsRequest = dataService
-                        .getVideoStats("snippet", API_KEY, videos, 50);
+                        .getVideoStats("snippet", null, null, API_KEY, videos, 25);
                 videoStatsRequest.enqueue(new Callback<VideoStats>() {
 
                     @Override

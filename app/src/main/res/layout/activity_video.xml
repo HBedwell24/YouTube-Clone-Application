@@ -76,6 +76,24 @@
                     android:alpha="0.60" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/descriptionDropDown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:layout_marginTop="16dp"
+                android:clickable="true"
+                android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp" />
+
+            <TextView
+                android:id="@+id/videoDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Text"
+                android:visibility="gone"
+                android:layout_marginTop="16dp" />
+
         </LinearLayout>
 
             <View

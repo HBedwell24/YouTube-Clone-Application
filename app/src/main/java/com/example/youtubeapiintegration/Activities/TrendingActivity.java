@@ -17,7 +17,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -27,16 +26,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
 import com.example.youtubeapiintegration.Adapter.VideoStatsAdapter;
-import com.example.youtubeapiintegration.Models.Item;
-import com.example.youtubeapiintegration.Models.VideoDetails;
+import com.example.youtubeapiintegration.Models.VideoStats.Item;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.Retrofit.GetDataService;
 import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.material.navigation.NavigationView;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -44,18 +39,9 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
-import com.google.api.services.youtube.model.SearchListResponse;
-import com.google.api.services.youtube.model.SearchResult;
-import com.google.api.services.youtube.model.Subscription;
-import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -65,7 +51,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class TrendingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final Level LOGGING_LEVEL = Level.OFF;
     private static final String PREF_ACCOUNT_NAME = "accountName";
@@ -87,7 +73,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private Toolbar toolbar;
 
     private VideoStatsAdapter videoStatsAdapter;
-    private VideoDetailsAdapter videoDetailsAdapter;
     private final String TAG = AuthenticationActivity.class.getSimpleName();
 
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -185,33 +170,33 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private void getData() {
         swipeRefreshLayout.setRefreshing(true);
         GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<VideoDetails> videoDetailsRequest = dataService
-                .getVideoDetails("snippet", null, handleIntent(getIntent()), API_KEY, "relevance", 50);
-        videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
+        Call<VideoStats> videoStatsRequest = dataService
+                .getVideoStats("snippet", "mostPopular", "US", API_KEY, null, 25);
+        videoStatsRequest.enqueue(new Callback<VideoStats>() {
 
             @Override
-            public void onResponse(Call<VideoDetails> call, Response<VideoDetails> response) {
+            public void onResponse(Call<VideoStats> call, Response<VideoStats> response) {
                 if(response.isSuccessful()) {
 
                     if(response.body() != null) {
                         Log.e(TAG, "Response Successful");
-                        setUpRecyclerView(response.body().getItems());
+                        setUpVideoRecyclerView(response.body().getItems());
                         swipeRefreshLayout.setRefreshing(false);
                     }
                     else {
                         swipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(ProfileActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                        Toast.makeText(TrendingActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
                     }
                 }
                 else {
                     swipeRefreshLayout.setRefreshing(true);
-                    Toast.makeText(ProfileActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TrendingActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<VideoDetails> call, Throwable t) {
-                Toast.makeText(ProfileActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+            public void onFailure(Call<VideoStats> call, Throwable t) {
+                Toast.makeText(TrendingActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
                 Log.e(TAG.concat("API Request Failed"), t.getMessage());
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -257,7 +242,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         runOnUiThread(new Runnable() {
             public void run() {
                 Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
-                        connectionStatusCode, ProfileActivity.this, REQUEST_GOOGLE_PLAY_SERVICES);
+                        connectionStatusCode, TrendingActivity.this, REQUEST_GOOGLE_PLAY_SERVICES);
                 dialog.show();
             }
         });
@@ -383,11 +368,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         return query;
     }
 
-    private void setUpRecyclerView(List<Item> items) {
-        videoDetailsAdapter = new VideoDetailsAdapter(ProfileActivity.this, items);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ProfileActivity.this);
+    private void setUpVideoRecyclerView(List<Item> items) {
+        videoStatsAdapter = new VideoStatsAdapter(TrendingActivity.this, items);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(TrendingActivity.this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(videoDetailsAdapter);
+        recyclerView.setAdapter(videoStatsAdapter);
     }
 
     /** Check that Google Play services APK is installed and up to date. */
@@ -416,3 +401,4 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
     }
 }
+

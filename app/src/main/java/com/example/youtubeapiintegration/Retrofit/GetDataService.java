@@ -23,6 +23,8 @@ public interface GetDataService {
     @GET("videos")
     Call<VideoStats> getVideoStats(
             @Query("part") String part,
+            @Query("chart") String chart,
+            @Query("regionCode") String regionCode,
             @Query("key") String key,
             @Query("id") String id,
             @Query("maxResults") int maxResults
