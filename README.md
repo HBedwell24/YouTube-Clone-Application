@@ -3,7 +3,7 @@ The end goal of this project is to successfully retrieve the videos from an auth
 
 To meet this criteria, the tasks that are left to be completed are as follows:
 - [x] Merge Profile Activity with Authentication Activity to permit use of authenticated GET requests through a provided token
-- [ ] Revise UI/UX to more accurately reflect principles present in Material 2.0 Guidelines
+- [x] Revise UI/UX to more accurately reflect principles present in Material 2.0 Guidelines
 - [x] Optimize main thread usage through the use of asychronous tasks 
 - [ ] Clean up unused Java classes and/or models
 
@@ -15,5 +15,6 @@ To meet this criteria, the tasks that are left to be completed are as follows:
 - OAuth2
 - Google Play Services Libraries
 - YouTube Data API V3
+- Joda-Time
 
 
