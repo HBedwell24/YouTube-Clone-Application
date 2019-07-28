@@ -1,112 +1,151 @@
 package com.example.youtubeapiintegration.Fragments;
 
-import android.content.Context;
-import android.net.Uri;
+import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.youtubeapiintegration.Activities.AuthenticationActivity;
+import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
+import com.example.youtubeapiintegration.Models.Item;
+import com.example.youtubeapiintegration.Models.VideoDetails;
 import com.example.youtubeapiintegration.R;
+import com.example.youtubeapiintegration.Retrofit.GetDataService;
+import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
+import com.google.gson.Gson;
 
+import org.json.JSONObject;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class HomeFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private final String TAG = AuthenticationActivity.class.getSimpleName();
 
-    private OnFragmentInteractionListener mListener;
+    private static final String API_KEY = "";
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView recyclerView;
+    private VideoDetailsAdapter videoDetailsAdapter;
 
-    public HomeFragment() {
-        // Required empty public constructor
-    }
+    Call<VideoDetails> videoDetailsRequest;
+    String dataBackup;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    Response<VideoDetails> savedResponse;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
+        if (savedInstanceState != null) {
+            dataBackup = savedInstanceState.getString("jsonData", null);
+            Response<VideoDetails> object = new Gson().fromJson(dataBackup, Response.class);
+            setUpRecyclerView(object.body().getItems());
         }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        getActivity().setTitle("Home");
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        super.onActivityCreated(savedInstanceState);
+        recyclerView = getActivity().findViewById(R.id.recyclerview);
+        swipeRefreshLayout = getActivity().findViewById(R.id.swipeRefresh);
+
+        if (savedInstanceState == null) {
+            setUpRefreshListener();
+            getData();
         }
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("jsonData", new Gson().toJson(savedResponse));
+    }
+
+    private void setUpRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                getData();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+    private void getData() {
+        swipeRefreshLayout.setRefreshing(true);
+        GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+        videoDetailsRequest = dataService
+                .getVideoDetails("snippet", null, handleIntent(getActivity().getIntent()), API_KEY, "relevance", 50);
+        videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
+
+            @Override
+            public void onResponse(Call<VideoDetails> call, Response<VideoDetails> response) {
+                if(response.isSuccessful()) {
+
+                    if(response.body() != null) {
+                        savedResponse = response;
+                        Log.e(TAG, "Response Successful");
+                        setUpRecyclerView(response.body().getItems());
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                    else {
+                        swipeRefreshLayout.setRefreshing(false);
+                        Toast.makeText(getActivity().getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else {
+                    swipeRefreshLayout.setRefreshing(true);
+                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VideoDetails> call, Throwable t) {
+                Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG.concat("API Request Failed"), t.getMessage());
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+    private static String handleIntent(Intent intent) {
+
+        String query = null;
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            query = intent.getStringExtra(SearchManager.QUERY);
         }
+        return query;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    private void setUpRecyclerView(List<Item> items) {
+        videoDetailsAdapter = new VideoDetailsAdapter(getActivity(), items);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(videoDetailsAdapter);
     }
 }

@@ -36,7 +36,7 @@
         </activity>
         <activity
             android:name=".Activities.AuthenticationActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/SplashTheme">
         </activity>
         <activity android:name="net.openid.appauth.RedirectUriReceiverActivity">
             <intent-filter>

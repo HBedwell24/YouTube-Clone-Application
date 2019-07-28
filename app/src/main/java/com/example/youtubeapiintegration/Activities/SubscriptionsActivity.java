@@ -181,8 +181,6 @@ public class SubscriptionsActivity extends AppCompatActivity implements Navigati
                 new subscriptionRequestTask(SubscriptionsActivity.this).execute();
             }
         }
-
-
     }
 
     private void setUpRefreshListener() {

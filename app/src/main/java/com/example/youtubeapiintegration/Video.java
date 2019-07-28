@@ -56,8 +56,10 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         dislikes = findViewById(R.id.dislikes);
         videoTitle = findViewById(R.id.videoTitle);
         videoDescription = findViewById(R.id.videoDescription);
+
         descriptionDropDown = findViewById(R.id.descriptionDropDown);
         descriptionDropDown.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 if (videoDescription.getVisibility() == View.GONE) {
@@ -68,22 +70,24 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
                     videoDescription.setVisibility(View.GONE);
                     descriptionDropDown.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_down_black_24dp, 0);
                 }
-
             }
         });
 
         bundle = getIntent().getExtras();
+
         if (bundle != null) {
             videoID = bundle.getString("videoID");
             videoTitle.setText(bundle.getString("videoTitle"));
+            views.setText(NumberFormat.getNumberInstance(Locale.US).format(Integer.parseInt(bundle.getString("views"))).concat(" views"));
             videoDescription.setText(bundle.getString("description"));
+            likes.setText(format(Long.parseLong(bundle.getString("likes"))));
+            dislikes.setText(format(Long.parseLong(bundle.getString("dislikes"))));
             Log.e("Youtube Video ID ", videoID);
         }
         else {
             Log.e("Video ID is invalid", videoID.concat(" "));
         }
         playerView.initialize(API_KEY, this);
-        getStats();
         getCommentsData();
     }
 
@@ -154,36 +158,6 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         long truncated = value / (divideBy / 10); //the number part of the output times 10
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
-    }
-
-    private void getStats() {
-        GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<VideoStats> videoStatsRequest = dataService.getVideoStats("statistics", null, null, API_KEY, videoID, 1);
-        videoStatsRequest.enqueue(new Callback<VideoStats>() {
-
-            @Override
-            public void onResponse(Call<VideoStats> call, Response<VideoStats> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        int number = Integer.parseInt(response.body().getItems().get(0).getStatistics().getViewCount());
-                        views.setText(NumberFormat.getNumberInstance(Locale.US).format(number).concat(" views"));
-                        likes.setText(format(Long.parseLong(response.body().getItems().get(0).getStatistics().getLikeCount())));
-                        dislikes.setText((format(Long.parseLong(response.body().getItems().get(0).getStatistics().getDislikeCount()))));
-                    }
-                    else {
-                        Log.e(">>>> RESPONSE BODY NULL", "NULL");
-                    }
-                }
-                else {
-                    Log.e(">>>> RESPONSE NOT SUCCESSFUL", String.valueOf(response.code()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<VideoStats> call, Throwable t) {
-                Toast.makeText(Video.this, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     @Override

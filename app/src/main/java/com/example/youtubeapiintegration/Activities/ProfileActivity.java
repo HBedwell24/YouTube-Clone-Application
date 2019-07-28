@@ -29,6 +29,9 @@ import android.widget.Toast;
 
 import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
 import com.example.youtubeapiintegration.Adapter.VideoStatsAdapter;
+import com.example.youtubeapiintegration.Fragments.HomeFragment;
+import com.example.youtubeapiintegration.Fragments.SubscriptionsFragment;
+import com.example.youtubeapiintegration.Fragments.TrendingFragment;
 import com.example.youtubeapiintegration.Models.Item;
 import com.example.youtubeapiintegration.Models.VideoDetails;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
@@ -167,8 +170,13 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         recyclerView = findViewById(R.id.recyclerview);
 
-        setUpRefreshListener();
-        getData();
+       if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new HomeFragment()).commit();
+        }
+
+        //setUpRefreshListener();
+        //getData();
     }
 
     private void setUpRefreshListener() {
@@ -226,18 +234,18 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         switch (item.getItemId()) {
 
             case R.id.nav_home:
-                navigationIntent = new Intent(this, ProfileActivity.class);
-                startActivity(navigationIntent);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new HomeFragment()).commit();
                 break;
 
             case R.id.nav_trending:
-                navigationIntent = new Intent(this, TrendingActivity.class);
-                startActivity(navigationIntent);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new TrendingFragment()).commit();
                 break;
 
             case R.id.nav_subscriptions:
-                navigationIntent = new Intent(this, SubscriptionsActivity.class);
-                startActivity(navigationIntent);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new SubscriptionsFragment()).commit();
                 break;
 
             case R.id.nav_settings:

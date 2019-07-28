@@ -53,14 +53,10 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
         data = data.replace("&quot;", "'");
 
         holder.title.setText(data);
-        holder.channelTitle.setText("by " + videoDetailsList.get(position).getSnippet().getChannelTitle());
+        holder.channelTitle.setText(videoDetailsList.get(position).getSnippet().getChannelTitle());
         holder.publishedAt.setText(convertTimestamp(videoDetailsList.get(position).getSnippet().getPublishedAt()));
-        holder.description.setText(videoDetailsList.get(position).getSnippet().getDescription());
 
-        Glide.with(context)
-                .load(videoDetailsList
-                        .get(position)
-                        .getSnippet().getThumbnails().getHigh().getUrl())
+        Glide.with(context).load(videoDetailsList.get(position).getSnippet().getThumbnails().getHigh().getUrl())
                 .into(holder.thumbnail);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +91,7 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
     public class VideoDetailsViewHolder extends RecyclerView.ViewHolder {
 
         private TextView channelTitle;
-        private TextView publishedAt, title, description;
+        private TextView publishedAt, title;
         private ImageView thumbnail;
 
         public VideoDetailsViewHolder(View itemView) {
@@ -104,7 +100,6 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
             channelTitle = itemView.findViewById(R.id.channelTitle);
             publishedAt = itemView.findViewById(R.id.publishedAt);
             title = itemView.findViewById(R.id.title);
-            description = itemView.findViewById(R.id.description);
             thumbnail = itemView.findViewById(R.id.thumbnail);
         }
     }
