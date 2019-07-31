@@ -17,8 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.youtubeapiintegration.Activities.AuthenticationActivity;
-import com.example.youtubeapiintegration.Activities.ProfileActivity;
-import com.example.youtubeapiintegration.Activities.SubscriptionsActivity;
 import com.example.youtubeapiintegration.Adapter.VideoStatsAdapter;
 import com.example.youtubeapiintegration.Models.VideoStats.Item;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
@@ -41,7 +39,6 @@ import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;

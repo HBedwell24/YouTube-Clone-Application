@@ -1,15 +1,5 @@
 package com.example.youtubeapiintegration.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Dialog;
@@ -17,29 +7,33 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.SearchRecentSuggestions;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
 import com.example.youtubeapiintegration.Adapter.VideoStatsAdapter;
 import com.example.youtubeapiintegration.Fragments.HomeFragment;
+import com.example.youtubeapiintegration.Fragments.SearchFragment;
+import com.example.youtubeapiintegration.Fragments.SettingsFragment;
 import com.example.youtubeapiintegration.Fragments.SubscriptionsFragment;
 import com.example.youtubeapiintegration.Fragments.TrendingFragment;
-import com.example.youtubeapiintegration.Models.Item;
-import com.example.youtubeapiintegration.Models.VideoDetails;
-import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 import com.example.youtubeapiintegration.R;
-import com.example.youtubeapiintegration.Retrofit.GetDataService;
-import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.example.youtubeapiintegration.SuggestionProvider;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.material.navigation.NavigationView;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -47,26 +41,12 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
-import com.google.api.services.youtube.model.SearchListResponse;
-import com.google.api.services.youtube.model.SearchResult;
-import com.google.api.services.youtube.model.Subscription;
-import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -136,7 +116,21 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+
+                if (query.length() > 0) {
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    SearchFragment searchFragment = new SearchFragment();
+
+                    Bundle args = new Bundle();
+                    args.putString("queryParam", query);
+                    searchFragment.setArguments(args);
+
+                    transaction.replace(R.id.fragment_container, searchFragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+                return true;
             }
 
             @Override
@@ -152,8 +146,18 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
             @Override
             public void onSearchViewClosed() {
+
             }
         });
+
+        Intent intent = new Intent();
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+            suggestions.saveRecentQuery(query, null);
+        }
 
         // enable logging
         Logger.getLogger("com.google.api.client").setLevel(LOGGING_LEVEL);
@@ -171,90 +175,34 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         recyclerView = findViewById(R.id.recyclerview);
 
        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+            getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
                     new HomeFragment()).commit();
         }
-
-        //setUpRefreshListener();
-        //getData();
-    }
-
-    private void setUpRefreshListener() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
-                getData();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
-
-    private void getData() {
-        swipeRefreshLayout.setRefreshing(true);
-        GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<VideoDetails> videoDetailsRequest = dataService
-                .getVideoDetails("snippet", null, handleIntent(getIntent()), API_KEY, "relevance", 50);
-        videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
-
-            @Override
-            public void onResponse(Call<VideoDetails> call, Response<VideoDetails> response) {
-                if(response.isSuccessful()) {
-
-                    if(response.body() != null) {
-                        Log.e(TAG, "Response Successful");
-                        setUpRecyclerView(response.body().getItems());
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                    else {
-                        swipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(ProfileActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
-                    }
-                }
-                else {
-                    swipeRefreshLayout.setRefreshing(true);
-                    Toast.makeText(ProfileActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<VideoDetails> call, Throwable t) {
-                Toast.makeText(ProfileActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG.concat("API Request Failed"), t.getMessage());
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        Intent navigationIntent;
-
         switch (item.getItemId()) {
 
             case R.id.nav_home:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
                         new HomeFragment()).commit();
                 break;
 
             case R.id.nav_trending:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
                         new TrendingFragment()).commit();
                 break;
 
             case R.id.nav_subscriptions:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
                         new SubscriptionsFragment()).commit();
                 break;
 
             case R.id.nav_settings:
-                break;
-
-            case R.id.nav_logout:
-                logOutOfAccount();
-                navigationIntent = new Intent(this, AuthenticationActivity.class);
-                startActivity(navigationIntent);
+                getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
+                        new SettingsFragment()).commit();
                 break;
         }
         drawer.closeDrawer(GravityCompat.START);
@@ -296,7 +244,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
             case REQUEST_AUTHORIZATION:
                 if (resultCode == Activity.RESULT_OK) {
-                    //AsyncLoadTasks.run(this);
+                    // AsyncLoadTasks.run(this);
                 }
                 else {
                     chooseAccount();
@@ -321,22 +269,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.options_menu, menu);
         MenuItem item = menu.findItem(R.id.search);
         materialSearchView.setMenuItem(item);
 
-        //login = menu.findItem(R.id.login);
-        //logout = menu.findItem(R.id.logout);
-
-        if (credential.getSelectedAccountName() != null) {
-            //login.setVisible(false);
-            //logout.setVisible(true);
-        }
-
-        else {
-            //login.setVisible(true);
-            //logout.setVisible(false);
-        }
         return true;
     }
 
@@ -369,11 +306,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         }
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
-    }
-
     private void logOutOfAccount() {
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
@@ -381,24 +313,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         editor.apply();
     }
 
-    private static String handleIntent(Intent intent) {
-
-        String query = null;
-
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            query = intent.getStringExtra(SearchManager.QUERY);
-        }
-        return query;
-    }
-
-    private void setUpRecyclerView(List<Item> items) {
-        videoDetailsAdapter = new VideoDetailsAdapter(ProfileActivity.this, items);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ProfileActivity.this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(videoDetailsAdapter);
-    }
-
-    /** Check that Google Play services APK is installed and up to date. */
     private boolean checkGooglePlayServicesAvailable() {
         final int connectionStatusCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (GooglePlayServicesUtil.isUserRecoverableError(connectionStatusCode)) {

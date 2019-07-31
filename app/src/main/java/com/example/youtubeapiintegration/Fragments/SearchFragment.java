@@ -1,19 +1,16 @@
 package com.example.youtubeapiintegration.Fragments;
 
-import android.app.SearchManager;
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.youtubeapiintegration.Activities.AuthenticationActivity;
 import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
@@ -24,8 +21,6 @@ import com.example.youtubeapiintegration.Retrofit.GetDataService;
 import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
 import com.google.gson.Gson;
 
-import org.json.JSONObject;
-
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -34,7 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeFragment extends Fragment {
+public class SearchFragment extends Fragment {
 
     private final String TAG = AuthenticationActivity.class.getSimpleName();
 
@@ -44,26 +39,21 @@ public class HomeFragment extends Fragment {
     private VideoDetailsAdapter videoDetailsAdapter;
 
     Call<VideoDetails> videoDetailsRequest;
-    String dataBackup;
+    String query;
 
     Response<VideoDetails> savedResponse;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            dataBackup = savedInstanceState.getString("jsonData", null);
-            Response<VideoDetails> object = new Gson().fromJson(dataBackup, Response.class);
-            setUpRecyclerView(object.body().getItems());
-        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        getActivity().setTitle("Home");
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        query = getArguments().getString("queryParam");
+        getActivity().setTitle(query);
+        return inflater.inflate(R.layout.fragment_search, container, false);
     }
 
     @Override
@@ -100,7 +90,7 @@ public class HomeFragment extends Fragment {
         swipeRefreshLayout.setRefreshing(true);
         GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
         videoDetailsRequest = dataService
-                .getVideoDetails("snippet", null, handleIntent(getActivity().getIntent()), API_KEY, "relevance", 25);
+                .getVideoDetails("snippet", null, query, API_KEY, "relevance", 25);
         videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
 
             @Override
@@ -131,15 +121,6 @@ public class HomeFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-    }
-
-    private static String handleIntent(Intent intent) {
-
-        String query = null;
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            query = intent.getStringExtra(SearchManager.QUERY);
-        }
-        return query;
     }
 
     private void setUpRecyclerView(List<Item> items) {

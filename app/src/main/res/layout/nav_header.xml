@@ -28,5 +28,4 @@
         android:layout_height="wrap_content"
         android:text="jdoe@gmail.com" />
 
-
 </LinearLayout>

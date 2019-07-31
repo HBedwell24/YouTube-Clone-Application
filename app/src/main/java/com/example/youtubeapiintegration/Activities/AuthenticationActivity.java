@@ -129,11 +129,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
-    }
-
     private void logOutOfAccount() {
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
@@ -141,17 +136,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private static String handleIntent(Intent intent) {
-
-        String query = null;
-
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            query = intent.getStringExtra(SearchManager.QUERY);
-        }
-        return query;
-    }
-
-    /** Check that Google Play services APK is installed and up to date. */
     private boolean checkGooglePlayServicesAvailable() {
         final int connectionStatusCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (GooglePlayServicesUtil.isUserRecoverableError(connectionStatusCode)) {
