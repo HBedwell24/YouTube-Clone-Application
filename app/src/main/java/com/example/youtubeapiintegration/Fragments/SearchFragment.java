@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.youtubeapiintegration.Activities.AuthenticationActivity;
 import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
 import com.example.youtubeapiintegration.Credentials;
 import com.example.youtubeapiintegration.Models.Item;
@@ -21,7 +20,6 @@ import com.example.youtubeapiintegration.Models.VideoDetails;
 import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.Retrofit.GetDataService;
 import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
-import com.google.gson.Gson;
 
 import java.util.List;
 

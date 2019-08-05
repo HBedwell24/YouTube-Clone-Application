@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapiintegration.Adapter.CommentsAdapter;
 import com.example.youtubeapiintegration.Models.Comments.Comment;
-import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 import com.example.youtubeapiintegration.Retrofit.GetDataService;
 import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -39,8 +38,7 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
     TextView views, likes, dislikes, commentsSize, videoTitle, videoDescription, descriptionDropDown;
     RecyclerView recyclerViewComments;
     CommentsAdapter commentsAdapter;
-
-    private static final String API_KEY = "";
+    Credentials credentials;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +54,7 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         dislikes = findViewById(R.id.dislikes);
         videoTitle = findViewById(R.id.videoTitle);
         videoDescription = findViewById(R.id.videoDescription);
+        credentials = new Credentials();
 
         descriptionDropDown = findViewById(R.id.descriptionDropDown);
         descriptionDropDown.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +86,7 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         else {
             Log.e("Video ID is invalid", videoID.concat(" "));
         }
-        playerView.initialize(API_KEY, this);
+        playerView.initialize(credentials.getApiKey(), this);
         getCommentsData();
     }
 
@@ -100,7 +99,7 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
 
     private void getCommentsData() {
         GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<Comment.Model> commentsRequest = dataService.getCommentsData("snippet,replies", videoID, 25, null, API_KEY);
+        Call<Comment.Model> commentsRequest = dataService.getCommentsData("snippet,replies", videoID, 25, null, credentials.getApiKey());
 
         commentsRequest.enqueue(new Callback<Comment.Model>() {
             @Override
