@@ -23,10 +23,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
-import com.example.youtubeapiintegration.Adapter.VideoStatsAdapter;
 import com.example.youtubeapiintegration.Fragments.HomeFragment;
 import com.example.youtubeapiintegration.Fragments.SearchFragment;
 import com.example.youtubeapiintegration.Fragments.SettingsFragment;
@@ -52,7 +49,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     private static final Level LOGGING_LEVEL = Level.OFF;
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String API_KEY = "";
 
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 0;
     static final int REQUEST_AUTHORIZATION = 1;
@@ -64,14 +60,9 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private View header;
     private ImageView profilePicture;
     private TextView username, email;
-    private SwipeRefreshLayout swipeRefreshLayout;
 
     private MaterialSearchView materialSearchView;
     private Toolbar toolbar;
-
-    private VideoStatsAdapter videoStatsAdapter;
-    private VideoDetailsAdapter videoDetailsAdapter;
-    private final String TAG = AuthenticationActivity.class.getSimpleName();
 
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
     final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
@@ -89,8 +80,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
-
-        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -112,6 +101,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         materialSearchView = (MaterialSearchView) findViewById(R.id.search);
         materialSearchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
         materialSearchView.setEllipsize(true);
+        materialSearchView.setCursorDrawable(R.drawable.cursor);
         materialSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
 
             @Override
@@ -164,7 +154,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         // create OAuth credentials using the selected account name
         credential = GoogleAccountCredential.usingOAuth2(this, Collections.singleton(YouTubeScopes.YOUTUBE_FORCE_SSL));
-        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences settings = getSharedPreferences("com.example.youtubeapiintegration", Context.MODE_PRIVATE);
         credential.setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
 
         // Youtube client
@@ -256,7 +246,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                     String accountName = data.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
                         credential.setSelectedAccountName(accountName);
-                        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences settings = getSharedPreferences("com.example.youtubeapiintegration", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.commit();
@@ -280,7 +270,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences settings = getSharedPreferences("com.example.youtubeapiintegration", Context.MODE_PRIVATE);
         String value = settings.getString(PREF_ACCOUNT_NAME, "");
 
         switch (item.getItemId()) {
@@ -307,7 +297,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     }
 
     private void logOutOfAccount() {
-        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences settings = getSharedPreferences("com.example.youtubeapiintegration", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(PREF_ACCOUNT_NAME, "");
         editor.apply();

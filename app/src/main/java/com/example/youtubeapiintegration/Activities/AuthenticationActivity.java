@@ -3,7 +3,6 @@ package com.example.youtubeapiintegration.Activities;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,6 +50,7 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         signInButton = findViewById(R.id.sign_in);
         signInButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AuthenticationActivity.this, ProfileActivity.class);
@@ -122,18 +122,11 @@ public class AuthenticationActivity extends AppCompatActivity {
                         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
-                        editor.commit();
+                        editor.apply();
                     }
                 }
                 break;
         }
-    }
-
-    private void logOutOfAccount() {
-        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(PREF_ACCOUNT_NAME, "");
-        editor.apply();
     }
 
     private boolean checkGooglePlayServicesAvailable() {
@@ -151,9 +144,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         if (credential.getSelectedAccountName() == null) {
             // ask user to choose account
             chooseAccount();
-        }
-        else {
-            // Insert code here
         }
     }
 

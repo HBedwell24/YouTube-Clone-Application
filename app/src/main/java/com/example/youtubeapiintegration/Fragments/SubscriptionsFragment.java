@@ -4,20 +4,20 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.youtubeapiintegration.Activities.AuthenticationActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.example.youtubeapiintegration.Adapter.VideoStatsAdapter;
+import com.example.youtubeapiintegration.Credentials;
 import com.example.youtubeapiintegration.Models.VideoStats.Item;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 import com.example.youtubeapiintegration.R;
@@ -37,14 +37,18 @@ import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,36 +60,43 @@ import retrofit2.Response;
 
 public class SubscriptionsFragment extends Fragment {
 
-    private VideoStatsAdapter videoStatsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
 
-    static final int REQUEST_AUTHORIZATION = 1;
+    private static final int REQUEST_AUTHORIZATION = 1;
 
     private static final Level LOGGING_LEVEL = Level.OFF;
-    private static final String API_KEY = "";
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private final String TAG = AuthenticationActivity.class.getSimpleName();
+    private final String TAG = SubscriptionsFragment.class.getSimpleName();
 
-    final HttpTransport transport = AndroidHttp.newCompatibleTransport();
-    final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+    private final HttpTransport transport = AndroidHttp.newCompatibleTransport();
+    private final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
-    GoogleAccountCredential credential;
-    com.google.api.services.youtube.YouTube client;
+    private GoogleAccountCredential credential;
+    private com.google.api.services.youtube.YouTube client;
+    private SharedPreferences pref;
+    private Credentials credentials;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        getActivity().setTitle("Subscriptions");
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Objects.requireNonNull(getActivity()).setTitle("Subscriptions");
         return inflater.inflate(R.layout.fragment_subscriptions, container, false);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        pref = Objects.requireNonNull(getActivity()).getSharedPreferences("com.example.youtubeapiintegration", Context.MODE_PRIVATE);
+    }
 
-        recyclerView = getActivity().findViewById(R.id.recyclerview);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        super.onActivityCreated(savedInstanceState);
+        recyclerView = Objects.requireNonNull(getActivity()).findViewById(R.id.recyclerview);
         swipeRefreshLayout = getActivity().findViewById(R.id.swipeRefresh);
+        credentials = new Credentials();
 
         // enable logging
         Logger.getLogger("com.google.api.client").setLevel(LOGGING_LEVEL);
@@ -101,7 +112,20 @@ public class SubscriptionsFragment extends Fragment {
                 .build();
 
         setUpRefreshListener();
-        new subscriptionRequestTask(getActivity()).execute();
+
+        String previousData = pref.getString("subscriptionsFragmentItems", null);
+
+        if (previousData != null) {
+
+            Type type = new TypeToken<List<Item>>(){}.getType();
+
+            List<Item> list = new Gson().fromJson(previousData, type);
+            setUpVideoRecyclerView(list);
+        }
+        else {
+            swipeRefreshLayout.setRefreshing(true);
+            new subscriptionRequestTask(getActivity()).execute();
+        }
     }
 
     private void setUpRefreshListener() {
@@ -117,18 +141,16 @@ public class SubscriptionsFragment extends Fragment {
 
     private class subscriptionRequestTask extends AsyncTask<Void, Void, Void> {
 
-        private Context c;
+        private Context mContext;
 
-        public subscriptionRequestTask(Context context) {
-            c = context;
-        }
+        subscriptionRequestTask(Context context) { mContext = context; }
 
         @Override
         protected Void doInBackground(Void... voids) {
 
             try {
                 YouTube.Subscriptions.List subscriptionList = client.subscriptions().list("snippet").
-                        setOauthToken(credential.getToken()).setMaxResults(25L).setMine(true).setKey(API_KEY);
+                        setOauthToken(credential.getToken()).setMaxResults(25L).setMine(true).setKey(credentials.getApiKey());
                 SubscriptionListResponse response = subscriptionList.execute();
                 java.util.List<Subscription> subscriptions = response.getItems();
 
@@ -142,7 +164,7 @@ public class SubscriptionsFragment extends Fragment {
                     String channelId = subscription.getSnippet().getResourceId().getChannelId();
 
                     YouTube.Search.List channelSearch = client.search().list("snippet").setChannelId(channelId).
-                            setOauthToken(credential.getToken()).setPublishedAfter(date).setOrder("date").setKey(API_KEY);
+                            setOauthToken(credential.getToken()).setPublishedAfter(date).setOrder("date").setKey(credentials.getApiKey());
 
                     SearchListResponse channelSearchResponse = channelSearch.execute();
 
@@ -157,32 +179,38 @@ public class SubscriptionsFragment extends Fragment {
 
                 GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
                 Call<VideoStats> videoStatsRequest = dataService
-                        .getVideoStats("snippet, statistics", null, null, API_KEY, videos, 25);
+                        .getVideoStats("snippet, statistics", null, null, credentials.getApiKey(), videos, 25);
                 videoStatsRequest.enqueue(new Callback<VideoStats>() {
 
                     @Override
-                    public void onResponse(Call<VideoStats> call, Response<VideoStats> response) {
+                    public void onResponse(@NonNull Call<VideoStats> call, @NonNull Response<VideoStats> response) {
                         if(response.isSuccessful()) {
 
                             if(response.body() != null) {
+
+                                Gson gson = new Gson();
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("subscriptionsFragmentItems", gson.toJson(response.body().getItems()));
+                                editor.apply();
+
                                 Log.e(TAG, "Response Successful");
                                 setUpVideoRecyclerView(response.body().getItems());
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                             else {
                                 swipeRefreshLayout.setRefreshing(false);
-                                Toast.makeText(getActivity().getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                                Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
                             }
                         }
                         else {
                             swipeRefreshLayout.setRefreshing(true);
-                            Toast.makeText(getActivity().getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<VideoStats> call, Throwable t) {
-                        Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                    public void onFailure(@NonNull Call<VideoStats> call, @NonNull Throwable t) {
+                        Toast.makeText(mContext, t.getMessage(), Toast.LENGTH_LONG).show();
                         Log.e(TAG.concat("API Request Failed"), t.getMessage());
                         swipeRefreshLayout.setRefreshing(false);
                     }
@@ -200,13 +228,12 @@ public class SubscriptionsFragment extends Fragment {
             catch (GoogleAuthException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
     }
 
     private void setUpVideoRecyclerView(List<Item> items) {
-        videoStatsAdapter = new VideoStatsAdapter(getActivity(), items);
+        VideoStatsAdapter videoStatsAdapter = new VideoStatsAdapter(getActivity(), items);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(videoStatsAdapter);
