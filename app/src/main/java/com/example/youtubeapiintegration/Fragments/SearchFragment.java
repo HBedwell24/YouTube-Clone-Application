@@ -22,6 +22,7 @@ import com.example.youtubeapiintegration.Retrofit.GetDataService;
 import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -47,8 +48,8 @@ public class SearchFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        query = getArguments().getString("queryParam");
-        getActivity().setTitle(query);
+        query = Objects.requireNonNull(getArguments()).getString("queryParam");
+        Objects.requireNonNull(getActivity()).setTitle(query);
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
 
@@ -56,7 +57,7 @@ public class SearchFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
-        recyclerView = getActivity().findViewById(R.id.recyclerview);
+        recyclerView = Objects.requireNonNull(getActivity()).findViewById(R.id.recyclerview);
         swipeRefreshLayout = getActivity().findViewById(R.id.swipeRefresh);
         credentials = new Credentials();
 

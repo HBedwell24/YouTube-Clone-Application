@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.SearchView
+    android:layout_gravity="end"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    style="@style/SearchViewStyle"
+    xmlns:android="http://schemas.android.com/apk/res/android" />
