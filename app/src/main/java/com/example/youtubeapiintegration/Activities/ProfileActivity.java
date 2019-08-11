@@ -99,7 +99,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
        if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
                     new HomeFragment()).commit();
-        }
+       }
     }
 
     @Override
@@ -129,8 +129,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 break;
 
             case R.id.nav_settings:
-                getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
-                        new SettingsFragment()).commit();
+                Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
+                startActivity(intent);
                 break;
 
             case R.id.logout:

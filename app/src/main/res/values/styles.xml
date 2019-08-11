@@ -17,6 +17,7 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
@@ -34,7 +35,7 @@
         <!-- The hint text that appears when the user has not typed anything -->
         <item name="queryHint">@string/search</item>
         <!-- Stylize suggestions -->
-        <item name="suggestionRowLayout">@layout/search_view_suggestion_row</item>
+        <item name="suggestionRowLayout">@layout/suggestion_row_item</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
