@@ -23,10 +23,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.youtubeapiintegration.Fragments.HomeFragment;
 import com.example.youtubeapiintegration.Fragments.SearchFragment;
-import com.example.youtubeapiintegration.Fragments.SettingsFragment;
 import com.example.youtubeapiintegration.Fragments.SubscriptionsFragment;
 import com.example.youtubeapiintegration.Fragments.TrendingFragment;
 import com.example.youtubeapiintegration.R;
+import com.example.youtubeapiintegration.SharedPref;
 import com.example.youtubeapiintegration.SuggestionProvider;
 import com.google.android.material.navigation.NavigationView;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -55,11 +55,24 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private SearchView searchView;
     private Toolbar toolbar;
 
+    SharedPref sharedPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        sharedPref = new SharedPref(this);
+
+        if (sharedPref.loadNightModeState()) {
+            setTheme(R.style.DarkTheme);
+        }
+        else {
+            setTheme(R.style.ProfileTheme);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        getIntent().setAction("Already created");
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -141,6 +154,22 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     }
 
     @Override
+    public void onResume() {
+
+        String action = getIntent().getAction();
+
+        if (action == null || !action.equals("Already created")) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else {
+            getIntent().setAction(null);
+        }
+        super.onResume();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.options_menu, menu);
@@ -159,6 +188,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                     SearchRecentSuggestions suggestions = new SearchRecentSuggestions(ProfileActivity.this,
                             SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                     suggestions.saveRecentQuery(query, null);
+
+                    getIntent().setAction("Searching");
 
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                     SearchFragment searchFragment = new SearchFragment();

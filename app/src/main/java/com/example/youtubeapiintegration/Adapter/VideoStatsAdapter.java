@@ -52,7 +52,7 @@ public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.Vi
         return new VideoStatsViewHolder(view);
     }
 
-    public String timestampFormatter(DateTime publishedAt) {
+    private String timestampFormatter(DateTime publishedAt) {
 
         DateTime now = DateTime.now();
         Minutes minutesBetween = Minutes.minutesBetween(publishedAt, now);
@@ -178,12 +178,12 @@ public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.Vi
         return videoStatsList.size();
     }
 
-    public class VideoStatsViewHolder extends RecyclerView.ViewHolder {
+    class VideoStatsViewHolder extends RecyclerView.ViewHolder {
 
         private TextView channelTitle, publishedAt, title, views;
         private ImageView thumbnail;
 
-        public VideoStatsViewHolder(View itemView) {
+        VideoStatsViewHolder(View itemView) {
             super(itemView);
 
             channelTitle = itemView.findViewById(R.id.channelTitle);
@@ -205,7 +205,7 @@ public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.Vi
         suffixes.put(1_000_000_000_000_000_000L, "E");
     }
 
-    public static String format(long value) {
+    private static String format(long value) {
 
         if (value == Long.MIN_VALUE)
             return format(Long.MIN_VALUE + 1);

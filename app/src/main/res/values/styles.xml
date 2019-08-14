@@ -9,15 +9,47 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
+    <!-- Dark theme -->
+    <style name="DarkTheme" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">#212121</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">#121212</item>
+        <item name="preferenceTheme">@style/PreferenceTheme</item>
+        <item name="toolbarBackground">#212121</item>
+        <item name="backgroundColor">#121212</item>
+        <item name="cardBackground">#424242</item>
+        <item name="textColor">#ffffff</item>
+        <item name="toolbarTextColor">#ffffff</item>
+        <item name="buttonColor">@color/colorAccent</item>
+    </style>
+
+    <!-- Light theme -->
     <style name="ProfileTheme" parent="AppTheme.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="preferenceTheme">@style/PreferenceTheme</item>
+        <item name="toolbarBackground">@color/colorPrimary</item>
+        <item name="backgroundColor">#f0f0f0</item>
+        <item name="cardBackground">#ffffff</item>
+        <item name="textColor">#000000</item>
+        <item name="toolbarTextColor">#ffffff</item>
+        <item name="buttonColor">@color/colorAccent</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">?attr/toolbarTextColor</item>
+        <item name="android:textColorSecondary">?attr/toolbarTextColor</item>
+        <item name="actionMenuTextColor">?attr/toolbarTextColor</item>
         <item name="searchViewStyle">@style/SearchViewStyle</item>
+    </style>
+
+    <style name="PreferenceTheme">
+        <item name="android:background">?attr/backgroundColor</item>
+        <item name="android:textColor">?attr/textColor</item>
+        <item name="android:textColorSecondary">?attr/textColor</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

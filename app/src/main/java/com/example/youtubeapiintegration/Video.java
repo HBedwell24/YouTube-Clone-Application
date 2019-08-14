@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.youtubeapiintegration.Adapter.CommentsAdapter;
 import com.example.youtubeapiintegration.Models.Comments.Comment;
@@ -37,17 +38,30 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
     YouTubePlayerView playerView;
     TextView views, likes, dislikes, commentsSize, videoTitle, videoDescription, descriptionDropDown;
     RecyclerView recyclerViewComments;
+    private SwipeRefreshLayout swipeRefreshLayout;
     CommentsAdapter commentsAdapter;
     Credentials credentials;
+    SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        sharedPref = new SharedPref(this);
+
+        if (sharedPref.loadNightModeState()) {
+            setTheme(R.style.DarkTheme);
+        }
+        else {
+            setTheme(R.style.ProfileTheme);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
         bundle = new Bundle();
         playerView = findViewById(R.id.playerView);
         recyclerViewComments = findViewById(R.id.commentsRecyclerView);
+        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
         views = findViewById(R.id.views);
         commentsSize = findViewById(R.id.comments);
         likes = findViewById(R.id.likes);
@@ -86,8 +100,22 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         else {
             Log.e("Video ID is invalid", videoID.concat(" "));
         }
+        setUpRefreshListener();
+
         playerView.initialize(credentials.getApiKey(), this);
         getCommentsData();
+    }
+
+    private void setUpRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                getCommentsData();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     private void setUpRecyclerView(List<Comment.Item> items) {
@@ -100,22 +128,27 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
     private void getCommentsData() {
         GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
         Call<Comment.Model> commentsRequest = dataService.getCommentsData("snippet,replies", videoID, 25, null, credentials.getApiKey());
-
         commentsRequest.enqueue(new Callback<Comment.Model>() {
+
             @Override
             public void onResponse(Call<Comment.Model> call, Response<Comment.Model> response) {
                 if (response.isSuccessful()) {
+
                     if (response.body() != null) {
+
                         commentsSize.setText(Html.fromHtml("<b>Comments </b>" + response.body().getItems().size()));
+
                         Log.e("TAG", "Response Successful");
                         setUpRecyclerView(response.body().getItems());
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                     else {
-                        Log.e("TAG", "response body is null");
+                        swipeRefreshLayout.setRefreshing(false);
+                        Toast.makeText(Video.this, "Something went wrong", Toast.LENGTH_LONG).show();
                     }
                 }
                 else {
-                    Log.e("TAG", "Response was not successful");
+                    swipeRefreshLayout.setRefreshing(true);
                     Toast.makeText(Video.this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
             }

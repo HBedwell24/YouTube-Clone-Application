@@ -43,7 +43,7 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
         this.videoDetailsList = videoDetailsList;
     }
 
-    public String timestampFormatter(DateTime publishedAt) {
+    private String timestampFormatter(DateTime publishedAt) {
 
         DateTime now = DateTime.now();
         Minutes minutesBetween = Minutes.minutesBetween(publishedAt, now);
@@ -171,13 +171,13 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
         return videoDetailsList.size();
     }
 
-    public class VideoDetailsViewHolder extends RecyclerView.ViewHolder {
+    class VideoDetailsViewHolder extends RecyclerView.ViewHolder {
 
         private TextView channelTitle;
         private TextView publishedAt, title;
         private ImageView thumbnail;
 
-        public VideoDetailsViewHolder(View itemView) {
+        VideoDetailsViewHolder(View itemView) {
             super(itemView);
 
             channelTitle = itemView.findViewById(R.id.channelTitle);

@@ -44,15 +44,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     @Override
     public int getItemCount() {
-        return commentsList.size() == 0 ? 0: commentsList.size();
+        return commentsList.size();
     }
 
-    public class CommentsViewHolder extends RecyclerView.ViewHolder {
+    class CommentsViewHolder extends RecyclerView.ViewHolder {
 
         ImageView user_thumbnail;
         TextView username, comment;
 
-        public CommentsViewHolder(View itemView) {
+        CommentsViewHolder(View itemView) {
             super(itemView);
 
             user_thumbnail = itemView.findViewById(R.id.user_thumbnail);

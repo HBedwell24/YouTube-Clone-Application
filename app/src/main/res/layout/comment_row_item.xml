@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/comment_item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?attr/backgroundColor">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_thumbnail"
@@ -21,7 +22,7 @@
         android:layout_marginStart="16dp"
         android:layout_toEndOf="@+id/user_thumbnail"
         android:text="Username"
-        android:textColor="@android:color/black"
+        android:textColor="?attr/textColor"
         android:alpha="0.87"
         android:textSize="16sp" />
 
@@ -33,7 +34,7 @@
         android:layout_alignStart="@+id/username"
         android:layout_marginTop="2dp"
         android:text="Comment"
-        android:textColor="@android:color/black"
+        android:textColor="?attr/textColor"
         android:alpha="0.6"
         android:textSize="12sp" />
 
@@ -42,7 +43,7 @@
         android:layout_height="1dp"
         android:layout_below="@+id/comment"
         android:layout_marginTop="16dp"
-        android:background="@android:color/black"
+        android:background="?attr/textColor"
         android:alpha="0.38" />
 
 </RelativeLayout>

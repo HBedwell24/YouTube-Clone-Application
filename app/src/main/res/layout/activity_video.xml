@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Video">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/cardBackground"
         android:orientation="vertical">
 
         <com.google.android.youtube.player.YouTubePlayerView
@@ -26,11 +26,11 @@
                 android:id="@+id/videoTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:alpha="0.87"
                 android:fontFamily="sans-serif"
                 android:text="Video Title"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="@android:color/black"
-                android:alpha="0.87"
+                android:textColor="?attr/textColor"
                 android:textStyle="bold" />
 
             <TextView
@@ -39,10 +39,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_weight="1"
+                android:alpha="0.60"
                 android:gravity="center"
                 android:text="Views"
-                android:textColor="@android:color/black"
-                android:alpha="0.60"/>
+                android:textColor="?attr/textColor" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -54,26 +54,26 @@
                     android:id="@+id/likes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="34dp"
                     android:layout_weight="1"
-                    android:text="Likes"
+                    android:alpha="0.60"
                     android:drawableTop="@drawable/ic_thumb_up_black_24dp"
                     android:drawablePadding="8dp"
                     android:gravity="center_horizontal"
-                    android:textColor="@android:color/black"
-                    android:layout_marginEnd="34dp"
-                    android:alpha="0.60" />
+                    android:text="Likes"
+                    android:textColor="?attr/textColor" />
 
                 <TextView
                     android:id="@+id/dislikes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Dislikes"
+                    android:alpha="0.60"
                     android:drawableTop="@drawable/ic_thumb_down_black_24dp"
                     android:drawablePadding="8dp"
                     android:gravity="center_horizontal"
-                    android:textColor="@android:color/black"
-                    android:alpha="0.60" />
+                    android:text="Dislikes"
+                    android:textColor="?attr/textColor" />
 
             </LinearLayout>
 
@@ -81,49 +81,60 @@
                 android:id="@+id/descriptionDropDown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Description"
                 android:layout_marginTop="16dp"
+                android:alpha="0.60"
                 android:clickable="true"
-                android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp" />
+                android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+                android:text="Description"
+                android:textColor="?attr/textColor" />
 
             <TextView
                 android:id="@+id/videoDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:alpha="0.60"
                 android:text="Text"
-                android:visibility="gone"
-                android:layout_marginTop="16dp" />
+                android:textColor="?attr/textColor"
+                android:visibility="gone" />
 
         </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_above="@+id/user_thumbnail"
-                android:background="@android:color/black"
-                android:alpha="0.38" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/user_thumbnail"
+            android:alpha="0.38"
+            android:background="?attr/textColor" />
 
-            <TextView
-                android:id="@+id/comments"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:text="Comments"
-                android:textColor="@android:color/black"
-                android:alpha="0.60" />
+        <TextView
+            android:id="@+id/comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:alpha="0.60"
+            android:text="Comments"
+            android:textColor="?attr/textColor" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_above="@+id/user_thumbnail"
-                android:background="@android:color/black"
-                android:alpha="0.38" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/user_thumbnail"
+            android:alpha="0.38"
+            android:background="?attr/textColor" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/commentsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="vertical" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

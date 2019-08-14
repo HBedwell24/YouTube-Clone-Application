@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:elevation="4dp"
-    style="@style/CardView.Light">
+    android:elevation="1dp"
+    app:cardBackgroundColor="?attr/cardBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -24,7 +22,8 @@
             app:layout_constraintTop_toBottomOf="@+id/avatar_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/avatar_image"/>
+            app:layout_constraintBottom_toTopOf="@+id/avatar_image"
+            android:contentDescription="Thumbnail" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar_image"
@@ -44,9 +43,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
-            android:text="Title"
+            android:text="@string/title"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/textColor"
             android:alpha="0.87"
             android:maxLines="2"
             android:ellipsize="end"
@@ -63,9 +62,9 @@
             android:layout_marginStart="12dp"
             android:layout_marginBottom="12dp"
             android:layout_marginEnd="4dp"
-            android:text="Channel Title"
+            android:text="@string/channel_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/textColor"
             android:alpha="0.6"
             app:layout_constraintStart_toEndOf="@+id/avatar_image"
             app:layout_constraintTop_toBottomOf="@+id/title"
@@ -78,8 +77,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="12dp"
-            android:text="•"
-            android:textColor="@android:color/black"
+            android:text="@string/bullet"
+            android:textColor="?attr/textColor"
             android:alpha="0.6"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/channelTitle"
@@ -94,9 +93,9 @@
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="12dp"
-            android:text="Views"
+            android:text="@string/views"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/textColor"
             android:alpha="0.6"
             app:layout_constraintStart_toEndOf="@id/bullet1"
             app:layout_constraintTop_toBottomOf="@+id/title"
@@ -109,8 +108,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="12dp"
-            android:text="•"
-            android:textColor="@android:color/black"
+            android:text="@string/bullet"
+            android:textColor="?attr/textColor"
             android:alpha="0.6"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/views"
@@ -124,9 +123,9 @@
             android:layout_marginTop="2dp"
             android:layout_marginStart="4dp"
             android:layout_marginBottom="12dp"
-            android:text="Published At"
+            android:text="@string/published_at"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/textColor"
             android:alpha="0.6"
             app:layout_constraintStart_toEndOf="@id/bullet2"
             app:layout_constraintTop_toBottomOf="@+id/title"
