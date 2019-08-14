@@ -2,7 +2,7 @@ package com.example.youtubeapiintegration;
 
 public class Credentials {
 
-    private static final String API_KEY = "AIzaSyAMNlAD282VO9nlkd7bjeDakYq1ndxIYpA";
+    private static final String API_KEY = "";
 
     public String getApiKey() {
         return API_KEY;
