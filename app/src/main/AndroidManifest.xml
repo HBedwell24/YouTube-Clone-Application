@@ -15,8 +15,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".Activities.SettingsActivity"
-            android:theme="@style/PreferenceTheme" />
+            android:name=".Activities.SettingsActivity" />
 
         <provider
             android:name=".SuggestionProvider"
