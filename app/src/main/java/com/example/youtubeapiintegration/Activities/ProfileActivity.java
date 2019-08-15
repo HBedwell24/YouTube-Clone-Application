@@ -72,7 +72,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        getIntent().setAction("Already created");
+        getIntent().setAction("Creating Activity");
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -118,7 +118,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        //handleIntent(intent);
     }
 
     @Override
@@ -158,13 +157,13 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         String action = getIntent().getAction();
 
-        if (action == null || !action.equals("Already created")) {
+        if (action != null && (action.equals("Creating Activity") || action.equals("Searching"))) {
+            getIntent().setAction(null);
+        }
+        else {
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
             finish();
-        }
-        else {
-            getIntent().setAction(null);
         }
         super.onResume();
     }
@@ -264,6 +263,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public void onBackPressed() {
+
+        getIntent().setAction("Pressed Back");
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);

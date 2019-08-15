@@ -16,9 +16,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">#121212</item>
         <item name="preferenceTheme">@style/PreferenceTheme</item>
-        <item name="toolbarBackground">#212121</item>
+        <item name="toolbarBackground">#1F1F1F</item>
         <item name="backgroundColor">#121212</item>
-        <item name="cardBackground">#424242</item>
+        <item name="cardBackground">#1E1E1E</item>
         <item name="textColor">#ffffff</item>
         <item name="toolbarTextColor">#ffffff</item>
         <item name="buttonColor">@color/colorAccent</item>
@@ -44,6 +44,12 @@
         <item name="android:textColorSecondary">?attr/toolbarTextColor</item>
         <item name="actionMenuTextColor">?attr/toolbarTextColor</item>
         <item name="searchViewStyle">@style/SearchViewStyle</item>
+    </style>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="android:colorAccent">?attr/textColor</item>
+        <item name="android:textColor">?attr/textColor</item>
+        <item name="android:textColorPrimary">?attr/textColor</item>
     </style>
 
     <style name="PreferenceTheme">
