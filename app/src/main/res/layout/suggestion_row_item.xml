@@ -3,16 +3,6 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white">
 
-    <ImageView
-        android:id="@android:id/icon1"
-        style="@style/RtlOverlay.Widget.AppCompat.Search.DropDown.Icon1"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:scaleType="centerInside"
-        android:visibility="gone" />
-
     <TextView
         android:id="@android:id/text1"
         style="?android:attr/dropDownItemStyle"

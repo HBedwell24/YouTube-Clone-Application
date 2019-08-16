@@ -72,8 +72,6 @@
         <item name="searchHintIcon">@null</item>
         <!-- The hint text that appears when the user has not typed anything -->
         <item name="queryHint">@string/search</item>
-        <!-- Stylize suggestions -->
-        <item name="suggestionRowLayout">@layout/suggestion_row_item</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
