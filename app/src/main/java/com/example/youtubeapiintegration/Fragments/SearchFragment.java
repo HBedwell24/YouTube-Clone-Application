@@ -48,7 +48,15 @@ public class SearchFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        query = Objects.requireNonNull(getArguments()).getString("queryParam");
+
+        Bundle extras = getActivity().getIntent().getExtras();
+
+        if (extras != null) {
+            query = extras.getString("queryParam");
+        }
+        else {
+            query = null;
+        }
         Objects.requireNonNull(getActivity()).setTitle(query);
         return inflater.inflate(R.layout.fragment_search, container, false);
     }

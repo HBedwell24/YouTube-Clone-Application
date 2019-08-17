@@ -19,10 +19,8 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.youtubeapiintegration.Fragments.HomeFragment;
-import com.example.youtubeapiintegration.Fragments.SearchFragment;
 import com.example.youtubeapiintegration.Fragments.SubscriptionsFragment;
 import com.example.youtubeapiintegration.Fragments.TrendingFragment;
 import com.example.youtubeapiintegration.R;
@@ -157,7 +155,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         String action = getIntent().getAction();
 
-        if (action != null && (action.equals("Creating Activity") || action.equals("Searching"))) {
+        if (action != null && (action.equals("Creating Activity"))) {
             getIntent().setAction(null);
         }
         else {
@@ -184,26 +182,18 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
                 if (query.length() > 0) {
 
+                    getIntent().setAction("Searching");
+
                     SearchRecentSuggestions suggestions = new SearchRecentSuggestions(ProfileActivity.this,
                             SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                     suggestions.saveRecentQuery(query, null);
 
-                    getIntent().setAction("Searching");
-
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    SearchFragment searchFragment = new SearchFragment();
-
-                    Bundle args = new Bundle();
-                    args.putString("queryParam", query);
-                    searchFragment.setArguments(args);
-
-                    transaction.replace(R.id.fragment_container, searchFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-
                     searchView.clearFocus();
                     toolbar.collapseActionView();
 
+                    Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
+                    searchIntent.putExtra("queryParam", query);
+                    startActivity(searchIntent);
                 }
                 return false;
             }
@@ -228,19 +218,12 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 cursor.moveToPosition(position);
                 String query = cursor.getString(2);
 
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                SearchFragment searchFragment = new SearchFragment();
-
-                Bundle args = new Bundle();
-                args.putString("queryParam", query);
-                searchFragment.setArguments(args);
-
-                transaction.replace(R.id.fragment_container, searchFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-
                 searchView.clearFocus();
                 toolbar.collapseActionView();
+
+                Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
+                searchIntent.putExtra("queryParam", query);
+                startActivity(searchIntent);
 
                 return false;
             }
@@ -281,6 +264,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         editor.apply();
 
         Intent intent = new Intent(ProfileActivity.this, AuthenticationActivity.class);
+        finish();
         startActivity(intent);
     }
 }

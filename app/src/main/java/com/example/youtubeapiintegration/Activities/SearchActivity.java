@@ -6,11 +6,11 @@ import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.youtubeapiintegration.Fragments.SettingsFragment;
+import com.example.youtubeapiintegration.Fragments.SearchFragment;
 import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.SharedPref;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity {
 
     SharedPref sharedPref;
 
@@ -27,7 +27,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_search);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -36,7 +36,7 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new SettingsFragment()).commit();
+                new SearchFragment()).commit();
     }
 
     @Override

@@ -14,8 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity
-            android:name=".Activities.SettingsActivity" />
+        <activity android:name=".Activities.SearchActivity" />
+
+        <activity android:name=".Activities.SettingsActivity" />
 
         <provider
             android:name=".SuggestionProvider"
@@ -24,19 +25,19 @@
         <activity
             android:name=".Activities.ProfileActivity"
             android:label="Home"
-            android:launchMode="singleTop"
-            android:theme="@style/ProfileTheme">
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
         <activity
             android:name=".Activities.AuthenticationActivity"
             android:theme="@style/SplashTheme" />
+
         <activity android:name="net.openid.appauth.RedirectUriReceiverActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -47,6 +48,7 @@
                 <data android:scheme="com.google.codelabs.appauth" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".Activities.SplashActivity"
             android:theme="@style/SplashTheme">
