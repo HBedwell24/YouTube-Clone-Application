@@ -1,18 +1,30 @@
 package com.example.youtubeapiintegration.Activities;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.youtubeapiintegration.Fragments.SearchFragment;
 import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.SharedPref;
+import com.example.youtubeapiintegration.SuggestionProvider;
+
+import java.util.Objects;
 
 public class SearchActivity extends AppCompatActivity {
 
     SharedPref sharedPref;
+    private SearchView searchView;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +41,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -45,6 +57,74 @@ public class SearchActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             finish();
         }
+        else if (item.getItemId() == R.id.search) {
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(Objects.requireNonNull(searchManager).getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                if (query.length() > 0) {
+
+                    getIntent().setAction("Searching");
+
+                    searchView.clearFocus();
+                    toolbar.collapseActionView();
+
+                    SearchRecentSuggestions suggestions = new SearchRecentSuggestions(SearchActivity.this,
+                            SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+                    suggestions.saveRecentQuery(query, null);
+
+                    Intent searchIntent = new Intent(SearchActivity.this, SearchActivity.class);
+                    searchIntent.putExtra("queryParam", query);
+                    startActivity(searchIntent);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+
+                Cursor cursor = searchView.getSuggestionsAdapter().getCursor();
+                cursor.moveToPosition(position);
+                String query = cursor.getString(2);
+
+                searchView.clearFocus();
+                toolbar.collapseActionView();
+
+                Intent searchIntent = new Intent(SearchActivity.this, SearchActivity.class);
+                searchIntent.putExtra("queryParam", query);
+                startActivity(searchIntent);
+
+                return true;
+            }
+        });
+        return true;
     }
 }
