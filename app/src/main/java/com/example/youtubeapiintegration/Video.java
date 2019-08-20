@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapiintegration.Adapter.CommentsAdapter;
 import com.example.youtubeapiintegration.Models.Comments.Comment;
+import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 import com.example.youtubeapiintegration.Retrofit.GetDataService;
 import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -88,11 +89,16 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         if (bundle != null) {
             videoID = bundle.getString("videoID");
             videoTitle.setText(bundle.getString("videoTitle"));
-            views.setText(NumberFormat.getNumberInstance(Locale.US).format(Integer.parseInt(bundle.getString("views"))).concat(" views"));
-            videoDescription.setText(bundle.getString("description"));
-            likes.setText(format(Long.parseLong(bundle.getString("likes"))));
-            dislikes.setText(format(Long.parseLong(bundle.getString("dislikes"))));
-            Log.e("Youtube Video ID ", videoID);
+            if (bundle.getString("views") != null && bundle.getString("description") != null && bundle.getString("likes") != null && bundle.getString("dislikes") != null) {
+                views.setText(NumberFormat.getNumberInstance(Locale.US).format(Integer.parseInt(bundle.getString("views"))).concat(" views"));
+                videoDescription.setText(bundle.getString("description"));
+                likes.setText(format(Long.parseLong(bundle.getString("likes"))));
+                dislikes.setText(format(Long.parseLong(bundle.getString("dislikes"))));
+                Log.e("Youtube Video ID ", videoID);
+            }
+            else {
+                getStats();
+            }
         }
         else {
             Log.e("Video ID is invalid", videoID.concat(" "));
@@ -120,6 +126,37 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Video.this);
         recyclerViewComments.setLayoutManager(layoutManager);
         recyclerViewComments.setAdapter(commentsAdapter);
+    }
+
+    private void getStats() {
+        GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+        Call<VideoStats> videoStatsRequest = dataService.getVideoStats("snippet, statistics", null, null, credentials.getApiKey(), videoID, 1);
+        videoStatsRequest.enqueue(new Callback<VideoStats>() {
+
+            @Override
+            public void onResponse(Call<VideoStats> call, Response<VideoStats> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        int number = Integer.parseInt(response.body().getItems().get(0).getStatistics().getViewCount());
+                        views.setText(NumberFormat.getNumberInstance(Locale.US).format(number).concat(" views"));
+                        likes.setText(format(Long.parseLong(response.body().getItems().get(0).getStatistics().getLikeCount())));
+                        dislikes.setText((format(Long.parseLong(response.body().getItems().get(0).getStatistics().getDislikeCount()))));
+                        videoDescription.setText(response.body().getItems().get(0).getSnippet().getDescription());
+                    }
+                    else {
+                        Log.e(">>>> RESPONSE BODY NULL", "NULL");
+                    }
+                }
+                else {
+                    Log.e(">>>> RESPONSE NOT SUCCESSFUL", String.valueOf(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VideoStats> call, Throwable t) {
+                Toast.makeText(Video.this, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void getCommentsData() {
