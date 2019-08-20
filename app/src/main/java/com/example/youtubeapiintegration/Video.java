@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.youtubeapiintegration.Adapter.CommentsAdapter;
 import com.example.youtubeapiintegration.Models.Comments.Comment;
@@ -38,7 +37,6 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
     YouTubePlayerView playerView;
     TextView views, likes, dislikes, commentsSize, videoTitle, videoDescription, descriptionDropDown;
     RecyclerView recyclerViewComments;
-    private SwipeRefreshLayout swipeRefreshLayout;
     CommentsAdapter commentsAdapter;
     Credentials credentials;
     SharedPref sharedPref;
@@ -61,7 +59,6 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         bundle = new Bundle();
         playerView = findViewById(R.id.playerView);
         recyclerViewComments = findViewById(R.id.commentsRecyclerView);
-        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
         views = findViewById(R.id.views);
         commentsSize = findViewById(R.id.comments);
         likes = findViewById(R.id.likes);
@@ -100,13 +97,13 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
         else {
             Log.e("Video ID is invalid", videoID.concat(" "));
         }
-        setUpRefreshListener();
+        //setUpRefreshListener();
 
         playerView.initialize(credentials.getApiKey(), this);
         getCommentsData();
     }
 
-    private void setUpRefreshListener() {
+    /*private void setUpRefreshListener() {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
@@ -116,7 +113,7 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-    }
+    }*/
 
     private void setUpRecyclerView(List<Comment.Item> items) {
         commentsAdapter = new CommentsAdapter(Video.this, items);
@@ -140,15 +137,15 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
 
                         Log.e("TAG", "Response Successful");
                         setUpRecyclerView(response.body().getItems());
-                        swipeRefreshLayout.setRefreshing(false);
+                        //swipeRefreshLayout.setRefreshing(false);
                     }
                     else {
-                        swipeRefreshLayout.setRefreshing(false);
+                        //swipeRefreshLayout.setRefreshing(false);
                         Toast.makeText(Video.this, "Something went wrong", Toast.LENGTH_LONG).show();
                     }
                 }
                 else {
-                    swipeRefreshLayout.setRefreshing(true);
+                    //swipeRefreshLayout.setRefreshing(true);
                     Toast.makeText(Video.this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
             }

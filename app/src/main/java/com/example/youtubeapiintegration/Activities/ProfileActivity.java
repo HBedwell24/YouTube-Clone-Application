@@ -184,18 +184,18 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
                     getIntent().setAction("Searching");
 
+                    searchView.clearFocus();
+                    toolbar.collapseActionView();
+
                     SearchRecentSuggestions suggestions = new SearchRecentSuggestions(ProfileActivity.this,
                             SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                     suggestions.saveRecentQuery(query, null);
 
-                    searchView.clearFocus();
-                    toolbar.collapseActionView();
-
-                    Intent searchIntent = new Intent(searchView.getContext(), SearchActivity.class);
+                    Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
                     searchIntent.putExtra("queryParam", query);
                     startActivity(searchIntent);
                 }
-                return false;
+                return true;
             }
 
             @Override
@@ -225,7 +225,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 searchIntent.putExtra("queryParam", query);
                 startActivity(searchIntent);
 
-                return false;
+                return true;
             }
         });
         return true;
