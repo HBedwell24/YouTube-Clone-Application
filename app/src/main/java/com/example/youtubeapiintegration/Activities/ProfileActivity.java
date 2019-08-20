@@ -191,7 +191,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                     searchView.clearFocus();
                     toolbar.collapseActionView();
 
-                    Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
+                    Intent searchIntent = new Intent(searchView.getContext(), SearchActivity.class);
                     searchIntent.putExtra("queryParam", query);
                     startActivity(searchIntent);
                 }

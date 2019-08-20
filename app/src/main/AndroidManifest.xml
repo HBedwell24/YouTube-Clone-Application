@@ -14,10 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".Activities.SearchActivity" />
-
-        <activity android:name=".Activities.SettingsActivity" />
-
         <provider
             android:name=".SuggestionProvider"
             android:authorities="com.example.youtubeapiintegration" />
@@ -33,6 +29,10 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
+        <activity android:name=".Activities.SearchActivity" />
+
+        <activity android:name=".Activities.SettingsActivity" />
 
         <activity
             android:name=".Activities.AuthenticationActivity"
