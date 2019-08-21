@@ -1,4 +1,4 @@
-package com.example.youtubeapiintegration;
+package com.example.youtubeapiintegration.Activities;
 
 import android.os.Bundle;
 import android.text.Html;
@@ -11,10 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapiintegration.Adapter.CommentsAdapter;
+import com.example.youtubeapiintegration.Credentials;
 import com.example.youtubeapiintegration.Models.Comments.Comment;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
+import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.Retrofit.GetDataService;
 import com.example.youtubeapiintegration.Retrofit.RetrofitInstance;
+import com.example.youtubeapiintegration.SharedPref;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -31,7 +34,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
+public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
 
     Bundle bundle;
     String videoID;
@@ -94,14 +97,14 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
                 videoDescription.setText(bundle.getString("description"));
                 likes.setText(format(Long.parseLong(bundle.getString("likes"))));
                 dislikes.setText(format(Long.parseLong(bundle.getString("dislikes"))));
-                Log.e("Youtube Video ID ", videoID);
+                Log.e("Youtube VideoActivity ID ", videoID);
             }
             else {
                 getStats();
             }
         }
         else {
-            Log.e("Video ID is invalid", videoID.concat(" "));
+            Log.e("VideoActivity ID is invalid", videoID.concat(" "));
         }
         //setUpRefreshListener();
 
@@ -122,8 +125,8 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
     }*/
 
     private void setUpRecyclerView(List<Comment.Item> items) {
-        commentsAdapter = new CommentsAdapter(Video.this, items);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Video.this);
+        commentsAdapter = new CommentsAdapter(VideoActivity.this, items);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(VideoActivity.this);
         recyclerViewComments.setLayoutManager(layoutManager);
         recyclerViewComments.setAdapter(commentsAdapter);
     }
@@ -154,7 +157,7 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
 
             @Override
             public void onFailure(Call<VideoStats> call, Throwable t) {
-                Toast.makeText(Video.this, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
+                Toast.makeText(VideoActivity.this, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -178,18 +181,18 @@ public class Video extends YouTubeBaseActivity implements YouTubePlayer.OnInitia
                     }
                     else {
                         //swipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(Video.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                        Toast.makeText(VideoActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
                     }
                 }
                 else {
                     //swipeRefreshLayout.setRefreshing(true);
-                    Toast.makeText(Video.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                    Toast.makeText(VideoActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Comment.Model> call, Throwable t) {
-                Toast.makeText(Video.this, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
+                Toast.makeText(VideoActivity.this, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
                 Log.e("TAG", t.getMessage());
             }
         });

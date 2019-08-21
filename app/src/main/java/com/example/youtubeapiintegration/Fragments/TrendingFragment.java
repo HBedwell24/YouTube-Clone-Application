@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.youtubeapiintegration.Adapter.VideoStatsAdapter;
+import com.example.youtubeapiintegration.Animations;
 import com.example.youtubeapiintegration.Credentials;
 import com.example.youtubeapiintegration.Models.VideoStats.Item;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
@@ -42,6 +43,7 @@ public class TrendingFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private Credentials credentials;
+    private Animations animations;
 
     private SharedPreferences pref;
 
@@ -65,6 +67,7 @@ public class TrendingFragment extends Fragment {
         recyclerView = Objects.requireNonNull(getActivity()).findViewById(R.id.recyclerview);
         swipeRefreshLayout = getActivity().findViewById(R.id.swipeRefresh);
         credentials = new Credentials();
+        animations = new Animations();
 
         setUpRefreshListener();
 
@@ -76,6 +79,7 @@ public class TrendingFragment extends Fragment {
 
             List<Item> list = new Gson().fromJson(previousData, type);
             setUpVideoRecyclerView(list);
+            animations.runLayoutAnimation(recyclerView);
         }
         else {
             getData();
@@ -113,6 +117,7 @@ public class TrendingFragment extends Fragment {
 
                         Log.e(TAG, "Response Successful");
                         setUpVideoRecyclerView(response.body().getItems());
+                        animations.runLayoutAnimation(recyclerView);
                         swipeRefreshLayout.setRefreshing(false);
                     }
                     else {

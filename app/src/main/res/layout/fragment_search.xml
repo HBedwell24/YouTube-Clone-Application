@@ -10,6 +10,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
+            android:layoutAnimation="@anim/layout_animation_fall_down"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.youtubeapiintegration.Models.VideoStats.Item;
 import com.example.youtubeapiintegration.R;
-import com.example.youtubeapiintegration.Video;
+import com.example.youtubeapiintegration.Activities.VideoActivity;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -149,7 +149,7 @@ public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.Vi
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, Video.class);
+                Intent intent = new Intent(context, VideoActivity.class);
                 intent.putExtra("videoID", videoStatsList.get(position).getId());
                 intent.putExtra("videoTitle", finalData);
                 intent.putExtra("description", videoStatsList.get(position).getSnippet().getDescription());

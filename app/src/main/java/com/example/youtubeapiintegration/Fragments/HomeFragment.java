@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
+import com.example.youtubeapiintegration.Animations;
 import com.example.youtubeapiintegration.Credentials;
 import com.example.youtubeapiintegration.Models.Item;
 import com.example.youtubeapiintegration.Models.VideoDetails;
@@ -46,6 +47,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private SharedPreferences pref;
     private Credentials credentials;
+    private Animations animations;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,7 @@ public class HomeFragment extends Fragment {
         recyclerView = Objects.requireNonNull(getActivity()).findViewById(R.id.recyclerview);
         swipeRefreshLayout = getActivity().findViewById(R.id.swipeRefresh);
         credentials = new Credentials();
+        animations = new Animations();
 
         setUpRefreshListener();
 
@@ -81,6 +84,7 @@ public class HomeFragment extends Fragment {
             Type type = new TypeToken<List<Item>>(){}.getType();
             List<Item> list = new Gson().fromJson(previousData, type);
             setUpRecyclerView(list);
+            animations.runLayoutAnimation(recyclerView);
         }
         else {
             swipeRefreshLayout.setRefreshing(true);
@@ -128,6 +132,7 @@ public class HomeFragment extends Fragment {
 
                             Log.e(TAG, "Response Successful");
                             setUpRecyclerView(response.body().getItems());
+                            animations.runLayoutAnimation(recyclerView);
                             swipeRefreshLayout.setRefreshing(false);
                         }
                         else {

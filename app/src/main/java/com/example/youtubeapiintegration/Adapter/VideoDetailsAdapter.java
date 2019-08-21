@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.youtubeapiintegration.Models.Item;
 import com.example.youtubeapiintegration.R;
-import com.example.youtubeapiintegration.Video;
+import com.example.youtubeapiintegration.Activities.VideoActivity;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -28,7 +28,6 @@ import org.joda.time.Years;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -146,7 +145,7 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, Video.class);
+                Intent intent = new Intent(context, VideoActivity.class);
                 intent.putExtra("videoID", videoDetailsList.get(position).getId().getVideoId());
                 intent.putExtra("videoTitle", videoDetailsList.get(position).getSnippet().getTitle());
                 context.startActivity(intent);

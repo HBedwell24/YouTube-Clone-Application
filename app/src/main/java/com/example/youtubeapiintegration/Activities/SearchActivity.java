@@ -56,6 +56,7 @@ public class SearchActivity extends AppCompatActivity {
 
         if (item.getItemId() == android.R.id.home) {
             finish();
+            overridePendingTransition(R.anim.search_activity_in, R.anim.search_activity_out);
         }
         else if (item.getItemId() == R.id.search) {
             return true;
@@ -91,6 +92,7 @@ public class SearchActivity extends AppCompatActivity {
                     Intent searchIntent = new Intent(SearchActivity.this, SearchActivity.class);
                     searchIntent.putExtra("queryParam", query);
                     startActivity(searchIntent);
+                    overridePendingTransition(R.anim.profile_activity_in, R.anim.profile_activity_out);
                 }
                 return true;
             }
@@ -121,6 +123,7 @@ public class SearchActivity extends AppCompatActivity {
                 Intent searchIntent = new Intent(SearchActivity.this, SearchActivity.class);
                 searchIntent.putExtra("queryParam", query);
                 startActivity(searchIntent);
+                overridePendingTransition(R.anim.profile_activity_in, R.anim.profile_activity_out);
 
                 return true;
             }

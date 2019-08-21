@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.youtubeapiintegration.Adapter.VideoDetailsAdapter;
+import com.example.youtubeapiintegration.Animations;
 import com.example.youtubeapiintegration.Credentials;
 import com.example.youtubeapiintegration.Models.Item;
 import com.example.youtubeapiintegration.Models.VideoDetails;
@@ -37,6 +38,7 @@ public class SearchFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private Credentials credentials;
+    private Animations animations;
 
     private String query;
 
@@ -68,6 +70,7 @@ public class SearchFragment extends Fragment {
         recyclerView = Objects.requireNonNull(getActivity()).findViewById(R.id.recyclerview);
         swipeRefreshLayout = getActivity().findViewById(R.id.swipeRefresh);
         credentials = new Credentials();
+        animations = new Animations();
 
         if (savedInstanceState == null) {
             setUpRefreshListener();
@@ -100,6 +103,7 @@ public class SearchFragment extends Fragment {
                     if(response.body() != null) {
                         Log.e(TAG, "Response Successful");
                         setUpRecyclerView(response.body().getItems());
+                        animations.runLayoutAnimation(recyclerView);
                         swipeRefreshLayout.setRefreshing(false);
                     }
                     else {

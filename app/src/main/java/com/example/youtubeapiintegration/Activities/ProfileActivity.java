@@ -194,6 +194,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                     Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
                     searchIntent.putExtra("queryParam", query);
                     startActivity(searchIntent);
+                    overridePendingTransition(R.anim.profile_activity_in, R.anim.profile_activity_out);
                 }
                 return true;
             }
@@ -224,6 +225,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
                 searchIntent.putExtra("queryParam", query);
                 startActivity(searchIntent);
+                overridePendingTransition(R.anim.profile_activity_in, R.anim.profile_activity_out);
 
                 return true;
             }
