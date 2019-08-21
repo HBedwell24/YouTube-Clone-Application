@@ -1,6 +1,4 @@
-package com.example.youtubeapiintegration.Models;
-
-import android.content.ClipData;
+package com.example.youtubeapiintegration.Models.VideoDetails;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

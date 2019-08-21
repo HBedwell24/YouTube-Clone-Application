@@ -1,7 +1,7 @@
 package com.example.youtubeapiintegration.Retrofit;
 
 import com.example.youtubeapiintegration.Models.Comments.Comment;
-import com.example.youtubeapiintegration.Models.VideoDetails;
+import com.example.youtubeapiintegration.Models.VideoDetails.VideoDetails;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 
 import retrofit2.Call;

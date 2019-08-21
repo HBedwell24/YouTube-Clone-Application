@@ -1,9 +1,9 @@
-package com.example.youtubeapiintegration.Models;
+package com.example.youtubeapiintegration.Models.VideoDetails;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Medium {
+public class High {
 
     @SerializedName("url")
     @Expose

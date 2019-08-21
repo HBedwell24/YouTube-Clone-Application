@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.youtubeapiintegration.Models.Item;
+import com.example.youtubeapiintegration.Models.VideoDetails.Item;
 import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.Activities.VideoActivity;
 
