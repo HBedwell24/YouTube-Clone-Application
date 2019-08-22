@@ -53,17 +53,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private SearchView searchView;
     private Toolbar toolbar;
 
-    SharedPref sharedPref;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        sharedPref = new SharedPref(this);
+        SharedPref sharedPref = new SharedPref(this);
 
         if (sharedPref.loadNightModeState()) {
             setTheme(R.style.DarkTheme);
-        }
-        else {
+        } else {
             setTheme(R.style.ProfileTheme);
         }
 
@@ -79,10 +76,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        if (savedInstanceState == null) {
-            navigationView.setCheckedItem(R.id.nav_home);
-        }
 
         View header = navigationView.getHeaderView(0);
         TextView email = header.findViewById(R.id.email);
@@ -107,10 +100,15 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         email.setText(credential.getSelectedAccountName());
 
-       if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
+        int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
+        if (backStackEntryCount == 0) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new HomeFragment()).commit();
-       }
+            navigationView.setCheckedItem(R.id.nav_home);
+        }
+        else {
+            getSupportFragmentManager().popBackStack();
+        }
     }
 
     @Override
@@ -157,14 +155,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         if (action != null && (action.equals("Creating Activity"))) {
             getIntent().setAction(null);
-        }
-        else {
+        } else {
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
             finish();
         }
         super.onResume();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -249,12 +247,9 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     @Override
     public void onBackPressed() {
 
-        getIntent().setAction("Pressed Back");
-
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }

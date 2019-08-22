@@ -2,6 +2,7 @@ package com.example.youtubeapiintegration.Fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -74,15 +75,14 @@ public class TrendingFragment extends Fragment {
         String previousData = pref.getString("trendingFragmentItems", null);
 
         if (previousData != null) {
-
             Type type = new TypeToken<List<Item>>(){}.getType();
-
             List<Item> list = new Gson().fromJson(previousData, type);
             setUpVideoRecyclerView(list);
             animations.runLayoutAnimation(recyclerView);
         }
         else {
-            getData();
+            swipeRefreshLayout.setRefreshing(true);
+            new trendingDataRequestTask(getActivity()).execute();
         }
     }
 
@@ -91,53 +91,63 @@ public class TrendingFragment extends Fragment {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                getData();
+                new trendingDataRequestTask(getActivity()).execute();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
 
-    private void getData() {
-        swipeRefreshLayout.setRefreshing(true);
-        GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<VideoStats> videoStatsRequest = dataService
-                .getVideoStats("snippet, statistics", "mostPopular", "US", credentials.getApiKey(), null, 25);
-        videoStatsRequest.enqueue(new Callback<VideoStats>() {
+    private class trendingDataRequestTask extends AsyncTask<Void, Void, Void> {
 
-            @Override
-            public void onResponse(@NonNull Call<VideoStats> call, @NonNull Response<VideoStats> response) {
-                if(response.isSuccessful()) {
+        private Context mContext;
 
-                    if(response.body() != null) {
+        trendingDataRequestTask(Context context) {
+            mContext = context;
+        }
 
-                        Gson gson = new Gson();
-                        SharedPreferences.Editor editor = pref.edit();
-                        editor.putString("trendingFragmentItems", gson.toJson(response.body().getItems()));
-                        editor.apply();
+        @Override
+        protected Void doInBackground(Void... voids) {
+            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+            Call<VideoStats> videoStatsRequest = dataService
+                    .getVideoStats("snippet, statistics", "mostPopular", "US", credentials.getApiKey(), null, 25);
+            videoStatsRequest.enqueue(new Callback<VideoStats>() {
 
-                        Log.e(TAG, "Response Successful");
-                        setUpVideoRecyclerView(response.body().getItems());
-                        animations.runLayoutAnimation(recyclerView);
-                        swipeRefreshLayout.setRefreshing(false);
+                @Override
+                public void onResponse(@NonNull Call<VideoStats> call, @NonNull Response<VideoStats> response) {
+                    if(response.isSuccessful()) {
+
+                        if(response.body() != null) {
+
+                            Gson gson = new Gson();
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString("trendingFragmentItems", gson.toJson(response.body().getItems()));
+                            editor.apply();
+
+                            Log.e(TAG, "Response Successful");
+                            setUpVideoRecyclerView(response.body().getItems());
+                            animations.runLayoutAnimation(recyclerView);
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                        else {
+                            swipeRefreshLayout.setRefreshing(false);
+                            Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
+                        }
                     }
                     else {
-                        swipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(getActivity().getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                        swipeRefreshLayout.setRefreshing(true);
+                        Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
                     }
                 }
-                else {
-                    swipeRefreshLayout.setRefreshing(true);
-                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<VideoStats> call, @NonNull Throwable t) {
-                Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG.concat("API Request Failed"), t.getMessage());
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<VideoStats> call, @NonNull Throwable t) {
+                    Toast.makeText(mContext, t.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG.concat("API Request Failed"), Objects.requireNonNull(t.getMessage()));
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
+            return null;
+        }
     }
 
     private void setUpVideoRecyclerView(List<Item> items) {

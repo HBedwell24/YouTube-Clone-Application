@@ -1,5 +1,7 @@
 package com.example.youtubeapiintegration.Fragments;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -72,10 +74,10 @@ public class SearchFragment extends Fragment {
         credentials = new Credentials();
         animations = new Animations();
 
-        if (savedInstanceState == null) {
-            setUpRefreshListener();
-            getData();
-        }
+        setUpRefreshListener();
+
+        swipeRefreshLayout.setRefreshing(true);
+        new searchDataRequestTask(getActivity()).execute();
     }
 
     private void setUpRefreshListener() {
@@ -83,52 +85,62 @@ public class SearchFragment extends Fragment {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                getData();
+                new searchDataRequestTask(getActivity()).execute();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
 
-    private void getData() {
-        swipeRefreshLayout.setRefreshing(true);
-        GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<VideoDetails> videoDetailsRequest = dataService
-                .getVideoDetails("snippet", null, query, credentials.getApiKey(), "relevance", 25);
-        videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
+    private class searchDataRequestTask extends AsyncTask<Void, Void, Void> {
 
-            @Override
-            public void onResponse(@NonNull Call<VideoDetails> call, @NonNull Response<VideoDetails> response) {
-                if(response.isSuccessful()) {
+        private Context mContext;
 
-                    if(response.body() != null) {
-                        Log.e(TAG, "Response Successful");
-                        setUpRecyclerView(response.body().getItems());
-                        animations.runLayoutAnimation(recyclerView);
-                        swipeRefreshLayout.setRefreshing(false);
+        searchDataRequestTask(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+            Call<VideoDetails> videoDetailsRequest = dataService
+                    .getVideoDetails("snippet", null, query, credentials.getApiKey(), "relevance", 25);
+            videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
+
+                @Override
+                public void onResponse(@NonNull Call<VideoDetails> call, @NonNull Response<VideoDetails> response) {
+                    if(response.isSuccessful()) {
+
+                        if(response.body() != null) {
+                            Log.e(TAG, "Response Successful");
+                            setUpRecyclerView(response.body().getItems());
+                            animations.runLayoutAnimation(recyclerView);
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                        else {
+                            swipeRefreshLayout.setRefreshing(false);
+                            Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
+                        }
                     }
                     else {
-                        swipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(getActivity().getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                        swipeRefreshLayout.setRefreshing(true);
+                        Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
                     }
                 }
-                else {
-                    swipeRefreshLayout.setRefreshing(true);
-                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<VideoDetails> call, @NonNull Throwable t) {
-                Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG.concat("API Request Failed"), t.getMessage());
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<VideoDetails> call, @NonNull Throwable t) {
+                    Toast.makeText(mContext, t.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG.concat("API Request Failed"), Objects.requireNonNull(t.getMessage()));
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
+            return null;
+        }
     }
 
     private void setUpRecyclerView(List<Item> items) {
         VideoDetailsAdapter videoDetailsAdapter = new VideoDetailsAdapter(getActivity(), items);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(videoDetailsAdapter);
     }

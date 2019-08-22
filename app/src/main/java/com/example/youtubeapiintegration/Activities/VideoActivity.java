@@ -1,5 +1,7 @@
 package com.example.youtubeapiintegration.Activities;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import retrofit2.Call;
@@ -100,7 +104,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
                 Log.e("Youtube VideoActivity ID ", videoID);
             }
             else {
-                getStats();
+                new videoDataRequestTask(this).execute();
             }
         }
         else {
@@ -109,7 +113,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         //setUpRefreshListener();
 
         playerView.initialize(credentials.getApiKey(), this);
-        getCommentsData();
+        new commentsDataRequestTask(this).execute();
     }
 
     /*private void setUpRefreshListener() {
@@ -131,71 +135,91 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         recyclerViewComments.setAdapter(commentsAdapter);
     }
 
-    private void getStats() {
-        GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<VideoStats> videoStatsRequest = dataService.getVideoStats("snippet, statistics", null, null, credentials.getApiKey(), videoID, 1);
-        videoStatsRequest.enqueue(new Callback<VideoStats>() {
+    private class videoDataRequestTask extends AsyncTask<Void, Void, Void> {
 
-            @Override
-            public void onResponse(Call<VideoStats> call, Response<VideoStats> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        int number = Integer.parseInt(response.body().getItems().get(0).getStatistics().getViewCount());
-                        views.setText(NumberFormat.getNumberInstance(Locale.US).format(number).concat(" views"));
-                        likes.setText(format(Long.parseLong(response.body().getItems().get(0).getStatistics().getLikeCount())));
-                        dislikes.setText((format(Long.parseLong(response.body().getItems().get(0).getStatistics().getDislikeCount()))));
-                        videoDescription.setText(response.body().getItems().get(0).getSnippet().getDescription());
+        private Context mContext;
+
+        videoDataRequestTask(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+            Call<VideoStats> videoStatsRequest = dataService.getVideoStats("snippet, statistics", null, null, credentials.getApiKey(), videoID, 1);
+            videoStatsRequest.enqueue(new Callback<VideoStats>() {
+
+                @Override
+                public void onResponse(@NonNull Call<VideoStats> call, @NonNull Response<VideoStats> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            int number = Integer.parseInt(response.body().getItems().get(0).getStatistics().getViewCount());
+                            views.setText(NumberFormat.getNumberInstance(Locale.US).format(number).concat(" views"));
+                            likes.setText(format(Long.parseLong(response.body().getItems().get(0).getStatistics().getLikeCount())));
+                            dislikes.setText((format(Long.parseLong(response.body().getItems().get(0).getStatistics().getDislikeCount()))));
+                            videoDescription.setText(response.body().getItems().get(0).getSnippet().getDescription());
+                        }
+                        else {
+                            Log.e(">>>> RESPONSE BODY NULL", "NULL");
+                        }
                     }
                     else {
-                        Log.e(">>>> RESPONSE BODY NULL", "NULL");
+                        Log.e(">>>> RESPONSE NOT SUCCESSFUL", String.valueOf(response.code()));
                     }
                 }
-                else {
-                    Log.e(">>>> RESPONSE NOT SUCCESSFUL", String.valueOf(response.code()));
-                }
-            }
 
-            @Override
-            public void onFailure(Call<VideoStats> call, Throwable t) {
-                Toast.makeText(VideoActivity.this, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<VideoStats> call, @NonNull Throwable t) {
+                    Toast.makeText(mContext, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
+                }
+            });
+            return null;
+        }
     }
 
-    private void getCommentsData() {
-        GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
-        Call<Comment.Model> commentsRequest = dataService.getCommentsData("snippet,replies", videoID, 25, null, credentials.getApiKey());
-        commentsRequest.enqueue(new Callback<Comment.Model>() {
+    private class commentsDataRequestTask extends AsyncTask<Void, Void, Void> {
 
-            @Override
-            public void onResponse(Call<Comment.Model> call, Response<Comment.Model> response) {
-                if (response.isSuccessful()) {
+        private Context mContext;
 
-                    if (response.body() != null) {
+        commentsDataRequestTask(Context context) {
+            mContext = context;
+        }
 
-                        commentsSize.setText(Html.fromHtml("<b>Comments </b>" + response.body().getItems().size()));
+        @Override
+        protected Void doInBackground(Void... voids) {
+            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+            Call<Comment.Model> commentsRequest = dataService.getCommentsData("snippet,replies", videoID, 25, null, credentials.getApiKey());
+            commentsRequest.enqueue(new Callback<Comment.Model>() {
 
-                        Log.e("TAG", "Response Successful");
-                        setUpRecyclerView(response.body().getItems());
-                        //swipeRefreshLayout.setRefreshing(false);
-                    }
-                    else {
-                        //swipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(VideoActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                @Override
+                public void onResponse(@NonNull Call<Comment.Model> call, @NonNull Response<Comment.Model> response) {
+                    if (response.isSuccessful()) {
+
+                        if (response.body() != null) {
+
+                            commentsSize.setText(Html.fromHtml("<b>Comments </b>" + response.body().getItems().size()));
+
+                            Log.e("TAG", "Response Successful");
+                            setUpRecyclerView(response.body().getItems());
+                            //swipeRefreshLayout.setRefreshing(false);
+                        } else {
+                            //swipeRefreshLayout.setRefreshing(false);
+                            Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        //swipeRefreshLayout.setRefreshing(true);
+                        Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
                     }
                 }
-                else {
-                    //swipeRefreshLayout.setRefreshing(true);
-                    Toast.makeText(VideoActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<Comment.Model> call, Throwable t) {
-                Toast.makeText(VideoActivity.this, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
-                Log.e("TAG", t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<Comment.Model> call, @NonNull Throwable t) {
+                    Toast.makeText(mContext, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
+                    Log.e("TAG", Objects.requireNonNull(t.getMessage()));
+                }
+            });
+            return null;
+        }
     }
 
     private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
