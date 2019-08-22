@@ -84,7 +84,7 @@
                 android:layout_marginTop="16dp"
                 android:alpha="0.60"
                 android:clickable="true"
-                android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+                android:drawableEnd="@drawable/ic_arrow_drop_down_black_24dp"
                 android:text="Description"
                 android:textColor="?attr/textColor" />
 
@@ -98,7 +98,23 @@
                 android:textColor="?attr/textColor"
                 android:visibility="gone" />
 
+            <TextView
+                android:id="@+id/recommended"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:alpha="0.60"
+                android:clickable="true"
+                android:text="Recommended Videos"
+                android:textStyle="bold"
+                android:textColor="?attr/textColor" />
+
         </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recommendedRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"

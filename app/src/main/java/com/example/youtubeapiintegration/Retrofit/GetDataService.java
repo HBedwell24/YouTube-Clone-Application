@@ -1,6 +1,7 @@
 package com.example.youtubeapiintegration.Retrofit;
 
 import com.example.youtubeapiintegration.Models.Comments.Comment;
+import com.example.youtubeapiintegration.Models.RecommendedVideos.RecommendedVideo;
 import com.example.youtubeapiintegration.Models.VideoDetails.VideoDetails;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 
@@ -18,6 +19,15 @@ public interface GetDataService {
             @Query("key") String key,
             @Query("order") String order,
             @Query("maxResults") int maxResults
+    );
+
+    @GET("search")
+    Call<RecommendedVideo.Model> getRecommendedVideos(
+            @Query("part") String part,
+            @Query("relatedToVideoId") String relatedToVideoId,
+            @Query("maxResults") int maxResults,
+            @Query("type") String type,
+            @Query("key") String key
     );
 
     @GET("videos")

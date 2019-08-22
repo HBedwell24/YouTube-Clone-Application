@@ -14,8 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapiintegration.Adapter.CommentsAdapter;
+import com.example.youtubeapiintegration.Adapter.RecommendedVideoAdapter;
 import com.example.youtubeapiintegration.Credentials;
 import com.example.youtubeapiintegration.Models.Comments.Comment;
+import com.example.youtubeapiintegration.Models.RecommendedVideos.RecommendedVideo;
 import com.example.youtubeapiintegration.Models.VideoStats.VideoStats;
 import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.Retrofit.GetDataService;
@@ -44,8 +46,9 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
     String videoID;
     YouTubePlayerView playerView;
     TextView views, likes, dislikes, commentsSize, videoTitle, videoDescription, descriptionDropDown;
-    RecyclerView recyclerViewComments;
+    RecyclerView recyclerViewComments, recommendedVideos;
     CommentsAdapter commentsAdapter;
+    RecommendedVideoAdapter recommendedVideoAdapter;
     Credentials credentials;
     SharedPref sharedPref;
 
@@ -67,6 +70,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         bundle = new Bundle();
         playerView = findViewById(R.id.playerView);
         recyclerViewComments = findViewById(R.id.commentsRecyclerView);
+        recommendedVideos = findViewById(R.id.recommendedRecyclerView);
         views = findViewById(R.id.views);
         commentsSize = findViewById(R.id.comments);
         likes = findViewById(R.id.likes);
@@ -110,29 +114,24 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         else {
             Log.e("VideoActivity ID is invalid", videoID.concat(" "));
         }
-        //setUpRefreshListener();
 
         playerView.initialize(credentials.getApiKey(), this);
+        new recommendedDataRequestTask(this).execute();
         new commentsDataRequestTask(this).execute();
     }
 
-    /*private void setUpRefreshListener() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
-                getCommentsData();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }*/
-
-    private void setUpRecyclerView(List<Comment.Item> items) {
+    private void setUpCommentsRecyclerView(List<Comment.Item> items) {
         commentsAdapter = new CommentsAdapter(VideoActivity.this, items);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(VideoActivity.this);
         recyclerViewComments.setLayoutManager(layoutManager);
         recyclerViewComments.setAdapter(commentsAdapter);
+    }
+
+    private void setUpRecommendedRecyclerView(List<RecommendedVideo.Item> items) {
+        recommendedVideoAdapter = new RecommendedVideoAdapter(VideoActivity.this, items);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(VideoActivity.this);
+        recommendedVideos.setLayoutManager(layoutManager);
+        recommendedVideos.setAdapter(recommendedVideoAdapter);
     }
 
     private class videoDataRequestTask extends AsyncTask<Void, Void, Void> {
@@ -177,6 +176,44 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         }
     }
 
+    private class recommendedDataRequestTask extends AsyncTask<Void, Void, Void> {
+
+        private Context mContext;
+
+        recommendedDataRequestTask(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+            Call<RecommendedVideo.Model> videoStatsRequest = dataService.getRecommendedVideos("snippet", videoID, 15, "video", credentials.getApiKey());
+            videoStatsRequest.enqueue(new Callback<RecommendedVideo.Model>() {
+
+                @Override
+                public void onResponse(@NonNull Call<RecommendedVideo.Model> call, @NonNull Response<RecommendedVideo.Model> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            setUpRecommendedRecyclerView(response.body().getItems());
+                        }
+                        else {
+                            Log.e(">>>> RESPONSE BODY NULL", "NULL");
+                        }
+                    }
+                    else {
+                        Log.e(">>>> RESPONSE NOT SUCCESSFUL", String.valueOf(response.code()));
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<RecommendedVideo.Model> call, @NonNull Throwable t) {
+                    Toast.makeText(mContext, "Something went wrong. Please try again!", Toast.LENGTH_LONG).show();
+                }
+            });
+            return null;
+        }
+    }
+
     private class commentsDataRequestTask extends AsyncTask<Void, Void, Void> {
 
         private Context mContext;
@@ -198,12 +235,10 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
                         if (response.body() != null) {
 
                             commentsSize.setText(Html.fromHtml("<b>Comments </b>" + response.body().getItems().size()));
-
                             Log.e("TAG", "Response Successful");
-                            setUpRecyclerView(response.body().getItems());
-                            //swipeRefreshLayout.setRefreshing(false);
-                        } else {
-                            //swipeRefreshLayout.setRefreshing(false);
+                            setUpCommentsRecyclerView(response.body().getItems());
+                        }
+                        else {
                             Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
                         }
                     } else {
