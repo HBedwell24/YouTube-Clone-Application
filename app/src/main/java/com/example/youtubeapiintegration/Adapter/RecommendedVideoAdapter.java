@@ -121,7 +121,7 @@ public class RecommendedVideoAdapter extends RecyclerView.Adapter<RecommendedVid
     @NonNull
     @Override
     public VideoDetailsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.search_row_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.recommendation_row_item, parent, false);
         return new VideoDetailsViewHolder(view);
     }
 

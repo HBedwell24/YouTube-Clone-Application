@@ -4,7 +4,7 @@
     android:id="@+id/cardItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="16dp"
     android:elevation="1dp"
     app:cardBackgroundColor="?attr/cardBackground"
     style="@style/CardView.Light">
