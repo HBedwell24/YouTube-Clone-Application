@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +46,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
     Bundle bundle;
     String videoID;
     YouTubePlayerView playerView;
-    TextView views, likes, dislikes, commentsSize, videoTitle, videoDescription, descriptionDropDown;
+    TextView views, likes, dislikes, commentsSize, videoTitle, videoDescription;
     RecyclerView recyclerViewComments, recommendedVideos;
     CommentsAdapter commentsAdapter;
     RecommendedVideoAdapter recommendedVideoAdapter;
@@ -79,18 +80,19 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         videoDescription = findViewById(R.id.videoDescription);
         credentials = new Credentials();
 
-        descriptionDropDown = findViewById(R.id.descriptionDropDown);
-        descriptionDropDown.setOnClickListener(new View.OnClickListener() {
+        videoTitle.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 if (videoDescription.getVisibility() == View.GONE) {
+                    slideDown(videoDescription);
                     videoDescription.setVisibility(View.VISIBLE);
-                    descriptionDropDown.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_up_black_24dp, 0);
+                    videoTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_up_black_24dp, 0);
                 }
                 else {
+                    slideUp(videoDescription);
                     videoDescription.setVisibility(View.GONE);
-                    descriptionDropDown.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_down_black_24dp, 0);
+                    videoTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_down_black_24dp, 0);
                 }
             }
         });
@@ -118,6 +120,23 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         playerView.initialize(credentials.getApiKey(), this);
         new recommendedDataRequestTask(this).execute();
         new commentsDataRequestTask(this).execute();
+    }
+
+    // slide the view from below itself to the current position
+    public void slideUp(View view){
+        view.setVisibility(View.VISIBLE);
+        TranslateAnimation animate = new TranslateAnimation(0, 0, view.getHeight(), 0);
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+    }
+
+    // slide the view from its current position to below itself
+    public void slideDown(View view){
+        TranslateAnimation animate = new TranslateAnimation(0, 0, 0, view.getHeight());
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
     }
 
     private void setUpCommentsRecyclerView(List<Comment.Item> items) {

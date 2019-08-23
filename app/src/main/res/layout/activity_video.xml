@@ -32,6 +32,7 @@
                 android:fontFamily="sans-serif"
                 android:text="Video Title"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:clickable="true"
                 android:textColor="?attr/textColor"
                 android:textStyle="bold" />
 
@@ -39,7 +40,7 @@
                 android:id="@+id/views"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_weight="1"
                 android:alpha="0.60"
                 android:gravity="center"
@@ -78,17 +79,6 @@
                     android:textColor="?attr/textColor" />
 
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/descriptionDropDown"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:alpha="0.60"
-                android:clickable="true"
-                android:drawableEnd="@drawable/ic_arrow_drop_down_black_24dp"
-                android:text="Description"
-                android:textColor="?attr/textColor" />
 
             <TextView
                 android:id="@+id/videoDescription"
