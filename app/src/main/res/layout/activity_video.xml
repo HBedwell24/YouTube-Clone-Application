@@ -111,18 +111,16 @@
             android:layout_height="1dp"
             android:alpha="0.38"
             android:layout_marginTop="16dp"
-            android:background="?attr/textColor" />
+            android:background="#999999" />
 
         <TextView
             android:id="@+id/recommended"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_margin="16dp"
             android:alpha="0.60"
             android:text="Recommended Videos"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="?attr/textColor" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -134,7 +132,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:alpha="0.38"
-            android:background="?attr/textColor" />
+            android:background="#999999" />
 
         <TextView
             android:id="@+id/comments"
@@ -143,19 +141,19 @@
             android:layout_margin="16dp"
             android:alpha="0.60"
             android:text="Comments"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="?attr/textColor" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:alpha="0.38"
-            android:background="?attr/textColor" />
+            android:background="#999999" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/commentsRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

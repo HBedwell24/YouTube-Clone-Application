@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
@@ -137,7 +136,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         share.putExtra(Intent.EXTRA_SUBJECT,  bundle.getString("videoTitle") + " by " + bundle.getString("author"));
         share.putExtra(Intent.EXTRA_TEXT, "https://www.youtube.com/watch?v=" + videoID);
-        startActivity(Intent.createChooser(share, "Share link!"));
+        startActivity(Intent.createChooser(share, "Share Video URL"));
     }
 
     // slide the view from below itself to the current position
@@ -271,7 +270,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
 
                         if (response.body() != null) {
 
-                            commentsSize.setText(Html.fromHtml("<b>Comments </b>" + response.body().getItems().size()));
+                            commentsSize.setText("Comments " + response.body().getItems().size());
                             Log.e("TAG", "Response Successful");
                             setUpCommentsRecyclerView(response.body().getItems());
                         }
