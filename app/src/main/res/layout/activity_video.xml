@@ -71,11 +71,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginEnd="34dp"
                     android:alpha="0.60"
                     android:drawableTop="@drawable/ic_thumb_down_black_24dp"
                     android:drawablePadding="8dp"
                     android:gravity="center_horizontal"
                     android:text="Dislikes"
+                    android:textColor="?attr/textColor" />
+
+                <TextView
+                    android:id="@+id/share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:alpha="0.60"
+                    android:drawableTop="@drawable/baseline_reply_black_24dp"
+                    android:drawablePadding="8dp"
+                    android:clickable="true"
+                    android:gravity="center_horizontal"
+                    android:text="Share"
                     android:textColor="?attr/textColor" />
 
             </LinearLayout>

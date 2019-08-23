@@ -1,6 +1,7 @@
 package com.example.youtubeapiintegration.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -44,9 +45,9 @@ import retrofit2.Response;
 public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
 
     Bundle bundle;
-    String videoID;
+    String videoID, author;
     YouTubePlayerView playerView;
-    TextView views, likes, dislikes, commentsSize, videoTitle, videoDescription;
+    TextView views, likes, dislikes, commentsSize, videoTitle, videoDescription, shareButton;
     RecyclerView recyclerViewComments, recommendedVideos;
     CommentsAdapter commentsAdapter;
     RecommendedVideoAdapter recommendedVideoAdapter;
@@ -78,6 +79,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         dislikes = findViewById(R.id.dislikes);
         videoTitle = findViewById(R.id.videoTitle);
         videoDescription = findViewById(R.id.videoDescription);
+        shareButton = findViewById(R.id.share);
         credentials = new Credentials();
 
         videoTitle.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +99,13 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
             }
         });
 
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareVideo();
+            }
+        });
+
         bundle = getIntent().getExtras();
 
         if (bundle != null) {
@@ -107,6 +116,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
                 videoDescription.setText(bundle.getString("description"));
                 likes.setText(format(Long.parseLong(bundle.getString("likes"))));
                 dislikes.setText(format(Long.parseLong(bundle.getString("dislikes"))));
+                author = bundle.getString("author");
                 Log.e("Youtube VideoActivity ID ", videoID);
             }
             else {
@@ -116,10 +126,18 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         else {
             Log.e("VideoActivity ID is invalid", videoID.concat(" "));
         }
-
         playerView.initialize(credentials.getApiKey(), this);
         new recommendedDataRequestTask(this).execute();
         new commentsDataRequestTask(this).execute();
+    }
+
+    public void shareVideo() {
+        Intent share = new Intent(android.content.Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        share.putExtra(Intent.EXTRA_SUBJECT,  bundle.getString("videoTitle") + " by " + bundle.getString("author"));
+        share.putExtra(Intent.EXTRA_TEXT, "https://www.youtube.com/watch?v=" + videoID);
+        startActivity(Intent.createChooser(share, "Share link!"));
     }
 
     // slide the view from below itself to the current position

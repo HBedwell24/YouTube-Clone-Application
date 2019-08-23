@@ -156,6 +156,7 @@ public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.Vi
                 intent.putExtra("views", videoStatsList.get(position).getStatistics().getViewCount());
                 intent.putExtra("likes", videoStatsList.get(position).getStatistics().getLikeCount());
                 intent.putExtra("dislikes", videoStatsList.get(position).getStatistics().getDislikeCount());
+                intent.putExtra("author", videoStatsList.get(position).getSnippet().getChannelTitle());
                 context.startActivity(intent);
             }
         });

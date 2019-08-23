@@ -33,7 +33,7 @@
         <item name="preferenceTheme">@style/PreferenceTheme</item>
         <item name="toolbarBackground">@color/colorPrimary</item>
         <item name="backgroundColor">#ffffff</item>
-        <item name="cardBackground">#DCDCDC</item>
+        <item name="cardBackground">#ffffff</item>
         <item name="textColor">#000000</item>
         <item name="toolbarTextColor">#ffffff</item>
         <item name="buttonColor">@color/colorAccent</item>

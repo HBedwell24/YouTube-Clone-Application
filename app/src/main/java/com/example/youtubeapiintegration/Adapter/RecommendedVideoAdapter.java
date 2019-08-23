@@ -148,6 +148,7 @@ public class RecommendedVideoAdapter extends RecyclerView.Adapter<RecommendedVid
                 Intent intent = new Intent(context, VideoActivity.class);
                 intent.putExtra("videoID", recommendedVideoList.get(position).getId().getVideoId());
                 intent.putExtra("videoTitle", recommendedVideoList.get(position).getSnippet().getTitle());
+                intent.putExtra("author", recommendedVideoList.get(position).getSnippet().getChannelTitle());
                 context.startActivity(intent);
             }
         });
