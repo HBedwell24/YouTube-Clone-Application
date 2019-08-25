@@ -9,8 +9,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp">
 
         <ImageView
@@ -18,12 +18,12 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@android:color/darker_gray"
+            app:layout_constraintBottom_toTopOf="@+id/avatar_image"
             app:layout_constraintDimensionRatio="H,16:9"
-            app:layout_constraintTop_toBottomOf="@+id/avatar_image"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/avatar_image" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/avatar_image"
+            app:srcCompat="@android:color/darker_gray" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar_image"
@@ -32,9 +32,9 @@
             android:layout_marginTop="12dp"
             android:scaleType="centerCrop"
             android:src="@drawable/material_background"
-            app:layout_constraintTop_toBottomOf="@id/thumbnail"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintHorizontal_chainStyle="packed" />
+            app:layout_constraintTop_toBottomOf="@id/thumbnail" />
 
         <TextView
             android:id="@+id/title"
@@ -42,33 +42,33 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
+            android:alpha="0.87"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:text="@string/title"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="?attr/textColor"
-            android:alpha="0.87"
-            android:maxLines="2"
-            android:ellipsize="end"
-            app:layout_constraintTop_toTopOf="@+id/avatar_image"
             app:layout_constraintBottom_toBottomOf="@id/avatar_image"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/avatar_image" />
+            app:layout_constraintStart_toEndOf="@+id/avatar_image"
+            app:layout_constraintTop_toTopOf="@+id/avatar_image" />
 
         <TextView
             android:id="@+id/channelTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
             android:layout_marginStart="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="2dp"
             android:layout_marginEnd="4dp"
+            android:layout_marginBottom="12dp"
+            android:alpha="0.6"
             android:text="@string/channel_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="?attr/textColor"
-            android:alpha="0.6"
-            app:layout_constraintStart_toEndOf="@+id/avatar_image"
-            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/bullet1"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/avatar_image"
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <TextView
             android:id="@+id/bullet1"
@@ -76,35 +76,37 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="12dp"
+            android:alpha="0.6"
+            android:singleLine="true"
             android:text="@string/bullet"
             android:textColor="?attr/textColor"
-            android:alpha="0.6"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/channelTitle"
             app:layout_constraintEnd_toStartOf="@+id/publishedAt"
+            app:layout_constraintStart_toEndOf="@+id/channelTitle"
             app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <TextView
             android:id="@+id/publishedAt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
             android:layout_marginStart="4dp"
+            android:layout_marginTop="2dp"
             android:layout_marginBottom="12dp"
+            android:alpha="0.6"
+            android:singleLine="true"
             android:text="@string/published_at"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="?attr/textColor"
-            android:alpha="0.6"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/bullet1"
-            app:layout_constraintTop_toBottomOf="@+id/title"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#999999"
-        android:alpha="0.38" />
+        android:alpha="0.38"
+        android:background="#999999" />
 
 </LinearLayout>

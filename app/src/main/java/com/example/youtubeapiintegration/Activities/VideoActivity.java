@@ -52,6 +52,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
     RecommendedVideoAdapter recommendedVideoAdapter;
     Credentials credentials;
     SharedPref sharedPref;
+    View descriptionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
         videoTitle = findViewById(R.id.videoTitle);
         videoDescription = findViewById(R.id.videoDescription);
         shareButton = findViewById(R.id.share);
+        descriptionView = findViewById(R.id.descriptionView);
         credentials = new Credentials();
 
         videoTitle.setOnClickListener(new View.OnClickListener() {
@@ -86,12 +88,12 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
             @Override
             public void onClick(View view) {
                 if (videoDescription.getVisibility() == View.GONE) {
-                    slideDown(videoDescription);
+                    slideDown(descriptionView);
                     videoDescription.setVisibility(View.VISIBLE);
                     videoTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_up_black_24dp, 0);
                 }
                 else {
-                    slideUp(videoDescription);
+                    slideUp(descriptionView);
                     videoDescription.setVisibility(View.GONE);
                     videoTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_down_black_24dp, 0);
                 }
@@ -270,7 +272,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
 
                         if (response.body() != null) {
 
-                            commentsSize.setText("Comments " + response.body().getItems().size());
+                            commentsSize.setText("Comments (" + response.body().getItems().size() + ")");
                             Log.e("TAG", "Response Successful");
                             setUpCommentsRecyclerView(response.body().getItems());
                         }

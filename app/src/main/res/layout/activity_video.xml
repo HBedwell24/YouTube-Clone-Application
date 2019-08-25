@@ -19,8 +19,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:orientation="vertical">
 
@@ -29,10 +29,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:alpha="0.87"
+                android:clickable="true"
                 android:fontFamily="sans-serif"
                 android:text="Video Title"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:clickable="true"
                 android:textColor="?attr/textColor"
                 android:textStyle="bold" />
 
@@ -45,6 +45,7 @@
                 android:alpha="0.60"
                 android:gravity="center"
                 android:text="Views"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="?attr/textColor" />
 
             <LinearLayout
@@ -64,19 +65,21 @@
                     android:drawablePadding="8dp"
                     android:gravity="center_horizontal"
                     android:text="Likes"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="?attr/textColor" />
 
                 <TextView
                     android:id="@+id/dislikes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginEnd="34dp"
+                    android:layout_weight="1"
                     android:alpha="0.60"
                     android:drawableTop="@drawable/ic_thumb_down_black_24dp"
                     android:drawablePadding="8dp"
                     android:gravity="center_horizontal"
                     android:text="Dislikes"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="?attr/textColor" />
 
                 <TextView
@@ -85,11 +88,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:alpha="0.60"
+                    android:clickable="true"
                     android:drawableTop="@drawable/baseline_reply_black_24dp"
                     android:drawablePadding="8dp"
-                    android:clickable="true"
                     android:gravity="center_horizontal"
                     android:text="Share"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="?attr/textColor" />
 
             </LinearLayout>
@@ -107,10 +111,11 @@
         </LinearLayout>
 
         <View
+            android:id="@+id/descriptionView"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:alpha="0.38"
             android:layout_marginTop="16dp"
+            android:alpha="0.38"
             android:background="#999999" />
 
         <TextView
