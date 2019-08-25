@@ -52,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     private SearchView searchView;
     private Toolbar toolbar;
+    private boolean onBackPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,14 +156,29 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         if (action != null && (action.equals("Creating Activity"))) {
             getIntent().setAction(null);
-        } else {
+        }
+        else if (onBackPressed) {
+            getIntent().setAction(null);
+        }
+        else {
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
             finish();
         }
+        onBackPressed = false;
         super.onResume();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 0) {
+            if (resultCode == RESULT_CANCELED) {
+                onBackPressed = true;
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -222,7 +238,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
                 Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
                 searchIntent.putExtra("queryParam", query);
-                startActivity(searchIntent);
+                startActivityForResult(searchIntent, 0);
                 overridePendingTransition(R.anim.profile_activity_in, R.anim.profile_activity_out);
 
                 return true;

@@ -15,29 +15,56 @@
 
     <TextView
         android:id="@+id/comment"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/user_thumbnail"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_toEndOf="@+id/user_thumbnail"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:text="Comment"
+        android:text=""
         android:textColor="?attr/textColor"
         android:alpha="0.87" />
 
     <TextView
         android:id="@+id/username"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/comment"
         android:layout_alignStart="@+id/comment"
         android:layout_marginTop="2dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="4dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:text="Username"
+        android:text=""
         android:textColor="?attr/textColor"
         android:alpha="0.6" />
+
+    <TextView
+        android:id="@+id/bullet1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="12dp"
+        android:alpha="0.6"
+        android:text="@string/bullet"
+        android:textColor="?attr/textColor"
+        android:layout_toEndOf="@+id/username"
+        android:layout_below="@id/comment" />
+
+    <TextView
+        android:id="@+id/publishedAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:text=""
+        android:textColor="?attr/textColor"
+        android:alpha="0.6"
+        android:layout_toEndOf="@+id/bullet1"
+        android:layout_below="@id/comment" />
 
     <View
         android:layout_width="match_parent"

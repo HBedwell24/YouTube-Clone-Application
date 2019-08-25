@@ -55,6 +55,7 @@ public class SearchActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == android.R.id.home) {
+            setResult(RESULT_CANCELED);
             finish();
             overridePendingTransition(R.anim.search_activity_in, R.anim.search_activity_out);
         }

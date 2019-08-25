@@ -142,12 +142,13 @@ public class VideoDetailsAdapter extends RecyclerView.Adapter<VideoDetailsAdapte
         Glide.with(context).load(videoDetailsList.get(position).getSnippet().getThumbnails().getHigh().getUrl())
                 .into(holder.thumbnail);
 
+        final String finalData = data;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, VideoActivity.class);
                 intent.putExtra("videoID", videoDetailsList.get(position).getId().getVideoId());
-                intent.putExtra("videoTitle", videoDetailsList.get(position).getSnippet().getTitle());
+                intent.putExtra("videoTitle", finalData);
                 intent.putExtra("author", videoDetailsList.get(position).getSnippet().getChannelTitle());
                 context.startActivity(intent);
             }
