@@ -123,17 +123,17 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         switch (item.getItemId()) {
 
             case R.id.nav_home:
-                getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new HomeFragment()).commit();
                 break;
 
             case R.id.nav_trending:
-                getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new TrendingFragment()).commit();
                 break;
 
             case R.id.nav_subscriptions:
-                getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment_container,
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new SubscriptionsFragment()).commit();
                 break;
 

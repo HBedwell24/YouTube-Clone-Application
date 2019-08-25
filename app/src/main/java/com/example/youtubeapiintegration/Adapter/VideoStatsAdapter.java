@@ -1,6 +1,6 @@
 package com.example.youtubeapiintegration.Adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.youtubeapiintegration.Activities.VideoActivity;
 import com.example.youtubeapiintegration.Models.VideoStats.Item;
 import com.example.youtubeapiintegration.R;
-import com.example.youtubeapiintegration.Activities.VideoActivity;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -36,19 +36,19 @@ import java.util.TreeMap;
 
 public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.VideoStatsViewHolder> {
 
-    private Context context;
+    private Activity activity;
     private List<Item> videoStatsList;
     private DateTime dateTime;
 
-    public VideoStatsAdapter(Context context, List<Item> videoStatsList) {
-        this.context = context;
+    public VideoStatsAdapter(Activity activity, List<Item> videoStatsList) {
+        this.activity = activity;
         this.videoStatsList = videoStatsList;
     }
 
     @NonNull
     @Override
     public VideoStatsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.row_item, parent, false);
+        View view = LayoutInflater.from(activity).inflate(R.layout.row_item, parent, false);
         return new VideoStatsViewHolder(view);
     }
 
@@ -141,7 +141,7 @@ public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.Vi
         holder.views.setText(format(Long.parseLong(videoStatsList.get(position).getStatistics().getViewCount())));
         holder.publishedAt.setText(timestampFormatter(convertTimestamp(videoStatsList.get(position).getSnippet().getPublishedAt())));
 
-        Glide.with(context).load(videoStatsList.get(position).getSnippet().getThumbnails().
+        Glide.with(activity).load(videoStatsList.get(position).getSnippet().getThumbnails().
                 getHigh().getUrl()).into(holder.thumbnail);
 
         final String finalData = data;
@@ -149,7 +149,7 @@ public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.Vi
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, VideoActivity.class);
+                Intent intent = new Intent(activity, VideoActivity.class);
                 intent.putExtra("videoID", videoStatsList.get(position).getId());
                 intent.putExtra("videoTitle", finalData);
                 intent.putExtra("description", videoStatsList.get(position).getSnippet().getDescription());
@@ -157,7 +157,7 @@ public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.Vi
                 intent.putExtra("likes", videoStatsList.get(position).getStatistics().getLikeCount());
                 intent.putExtra("dislikes", videoStatsList.get(position).getStatistics().getDislikeCount());
                 intent.putExtra("author", videoStatsList.get(position).getSnippet().getChannelTitle());
-                context.startActivity(intent);
+                activity.startActivityForResult(intent, 0);
             }
         });
     }
@@ -169,7 +169,7 @@ public class VideoStatsAdapter extends RecyclerView.Adapter<VideoStatsAdapter.Vi
             dateTime = new DateTime(dateFormat.parse(publishedAt));
         }
         catch (ParseException exception) {
-            Toast.makeText(context, exception.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, exception.getMessage(), Toast.LENGTH_LONG).show();
         }
         return dateTime;
     }
