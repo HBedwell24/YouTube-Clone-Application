@@ -181,7 +181,7 @@ public class SubscriptionsFragment extends Fragment {
                 }
                 String videos = android.text.TextUtils.join(",", videoIdList);
 
-                GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+                GetDataService dataService = RetrofitInstance.INSTANCE.getRetrofit().create(GetDataService.class);
                 Call<VideoStats> videoStatsRequest = dataService
                         .getVideoStats("snippet, statistics", null, null, credentials.getApiKey(), videos, 25);
                 videoStatsRequest.enqueue(new Callback<VideoStats>() {

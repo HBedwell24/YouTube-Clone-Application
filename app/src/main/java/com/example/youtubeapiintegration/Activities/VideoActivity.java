@@ -182,7 +182,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
 
         @Override
         protected Void doInBackground(Void... voids) {
-            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+            GetDataService dataService = RetrofitInstance.INSTANCE.getRetrofit().create(GetDataService.class);
             Call<VideoStats> videoStatsRequest = dataService.getVideoStats("snippet, statistics", null, null, credentials.getApiKey(), videoID, 1);
             videoStatsRequest.enqueue(new Callback<VideoStats>() {
 
@@ -224,7 +224,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
 
         @Override
         protected Void doInBackground(Void... voids) {
-            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+            GetDataService dataService = RetrofitInstance.INSTANCE.getRetrofit().create(GetDataService.class);
             Call<RecommendedVideo.Model> videoStatsRequest = dataService.getRecommendedVideos("snippet", videoID, 15, "video", credentials.getApiKey());
             videoStatsRequest.enqueue(new Callback<RecommendedVideo.Model>() {
 
@@ -262,7 +262,7 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
 
         @Override
         protected Void doInBackground(Void... voids) {
-            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+            GetDataService dataService = RetrofitInstance.INSTANCE.getRetrofit().create(GetDataService.class);
             Call<Comment.Model> commentsRequest = dataService.getCommentsData("snippet,replies", videoID, 25, null, credentials.getApiKey());
             commentsRequest.enqueue(new Callback<Comment.Model>() {
 

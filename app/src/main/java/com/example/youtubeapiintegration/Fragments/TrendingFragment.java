@@ -107,7 +107,7 @@ public class TrendingFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+            GetDataService dataService = RetrofitInstance.INSTANCE.getRetrofit().create(GetDataService.class);
             Call<VideoStats> videoStatsRequest = dataService
                     .getVideoStats("snippet, statistics", "mostPopular", "US", credentials.getApiKey(), null, 25);
             videoStatsRequest.enqueue(new Callback<VideoStats>() {

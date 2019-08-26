@@ -101,7 +101,7 @@ public class SearchFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            GetDataService dataService = RetrofitInstance.getRetrofit().create(GetDataService.class);
+            GetDataService dataService = RetrofitInstance.INSTANCE.getRetrofit().create(GetDataService.class);
             Call<VideoDetails> videoDetailsRequest = dataService
                     .getVideoDetails("snippet", null, query, credentials.getApiKey(), "relevance", 25);
             videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
