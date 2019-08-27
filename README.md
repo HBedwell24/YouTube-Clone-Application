@@ -3,13 +3,15 @@ Following the authentication of an authorized user through a YouTube.Builder cli
 
 ## Technologies Used
 - Circle Image View by @hdodenhof
-- Retrofit
+- Custom Google Sign-In Button by @shobhitpuri
+- Google Play Services Libraries
 - Gson
 - Jackson
-- Picasso
-- OAuth2
-- Google Play Services Libraries
-- YouTube Data API V3 Java Client
 - Joda-Time
+- Kotlin
+- OAuth2
+- Picasso
+- Retrofit
+- YouTube Data API V3 Java Client
 
 
