@@ -21,6 +21,13 @@
     <string name="title">Title</string>
     <string name="channel_title">Channel Title</string>
     <string name="bullet">•</string>
-    <string name="views">Views</string>
     <string name="published_at">Published At</string>
+    <string name="video_title">Video Title</string>
+    <string name="views">Views</string>
+    <string name="likes">Likes</string>
+    <string name="dislikes">Dislikes</string>
+    <string name="share">Share</string>
+    <string name="description">Description</string>
+    <string name="recommended_videos">Recommended Videos</string>
+    <string name="comments">Comments (?)</string>
 </resources>

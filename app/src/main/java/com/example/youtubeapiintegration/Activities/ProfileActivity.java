@@ -139,7 +139,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
             case R.id.nav_settings:
                 Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
                 break;
 
             case R.id.logout:
