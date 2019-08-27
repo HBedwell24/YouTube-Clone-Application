@@ -1,20 +1,15 @@
 # Youtube API Integration (Work in Progress)
-The end goal of this project is to successfully retrieve the videos from an authenticated user's subscriptions, and display them within a VideoAdapter in an orderly fashion.
-
-To meet this criteria, the tasks that are left to be completed are as follows:
-- [x] Merge Profile Activity with Authentication Activity to permit use of authenticated GET requests through a provided token
-- [x] Revise UI/UX to more accurately reflect principles present in Material 2.0 Guidelines
-- [x] Optimize main thread usage through the use of asychronous tasks 
-- [ ] Clean up unused Java classes and/or models
+Following the authentication of an authorized user through a YouTube.Builder client, the workflow of the application allows for an individual to view subscriptions unique to that account, as well as videos that are trending across the entire YouTube platform (with no specific category in mind). In addition, one can also browse suggested videos based on relevance to the video ID of the media of choice, which can promote an exploratory experience similar to that of the official YouTube application.
 
 ## Technologies Used
+- Circle Image View by @hdodenhof
 - Retrofit
 - Gson
 - Jackson
 - Picasso
 - OAuth2
 - Google Play Services Libraries
-- YouTube Data API V3
+- YouTube Data API V3 Java Client
 - Joda-Time
 
 
