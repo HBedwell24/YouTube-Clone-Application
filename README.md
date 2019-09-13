@@ -4,7 +4,7 @@ Following the authentication of an authorized user through a YouTube.Builder cli
 ![YouTube Data API Integration](app/src/main/res/drawable/youtubeapithumbnail.jpg?raw=true "YouTube Data API Integration")
 
 ## Personalizing the User Experience
-To personalize an individual's experience, a Dark theme SwitchPreference has been featured within the Settings activity to compensate for instances where one might open this application within low lit environments, which might invoke more eye strain. Clearing cookies on the local application was another property that I found essential to the application, for the reason that recent search queries that have been submitted within the application's search view are saved within a SQLLite database to be reused at a later point. Though this may not appear daunting to most people, it is still, nevertheless, common courtesy to include this feature, especially considering how trivial it is to wipe such a database's contents.
+To personalize an individual's experience, a Dark theme SwitchPreference has been implemented within the Settings activity to compensate for instances where one might open this application within low lit environments, which might invoke more eye strain. Clearing cookies on the local application was another property that I found essential to the application, for the reason that recent search queries that have been submitted within the application's search view are saved within a SQLLite database to be reused at a later point. Though this may not appear daunting to most people, it is still, nevertheless, common courtesy to include this feature, especially considering how trivial it is to wipe such a database's contents.
 
 ## Technologies Used
 - Circle Image View by @hdodenhof
