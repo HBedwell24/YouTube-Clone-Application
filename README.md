@@ -7,16 +7,16 @@ Following the authentication of an authorized user through a YouTube.Builder cli
 To personalize an individual's experience, a Dark theme SwitchPreference has been implemented within the Settings activity to compensate for instances where one might open this application within low lit environments, which might invoke more eye strain. Clearing cookies on the local application was another property that I found essential to the application, for the reason that recent search queries that have been submitted within the application's search view are saved within a SQLLite database to be reused at a later point. Though this may not appear daunting to most people, it is still, nevertheless, common courtesy to include this feature, especially considering how trivial it is to wipe such a database's contents.
 
 ## Technologies Used
-- Circle Image View by @hdodenhof
-- Custom Google Sign-In Button by @shobhitpuri
-- Google Play Services Libraries
-- Gson
-- Jackson
-- Joda-Time
-- Kotlin
-- OAuth2
-- Picasso
-- Retrofit
-- YouTube Data API V3 Java Client
+* [x] Circle Image View by @hdodenhof
+* [x] Custom Google Sign-In Button by @shobhitpuri
+* [x] Google Play Services Libraries
+* [x] Gson
+* [x] Jackson
+* [x] Joda-Time
+* [x] Kotlin
+* [x] OAuth2
+* [x] Picasso
+* [x] Retrofit
+* [x] YouTube Data API V3 Java Client
 
 
