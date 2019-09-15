@@ -7,26 +7,17 @@
     android:padding="16dp"
     android:orientation="vertical">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_pic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher_round" />
-
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:text="John Doe"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="?attr/toolbarTextColor" />
+        android:src="@drawable/user" />
 
     <TextView
         android:id="@+id/email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="jdoe@gmail.com"
+        android:text="Email"
         android:textColor="?attr/toolbarTextColor" />
 
 </LinearLayout>

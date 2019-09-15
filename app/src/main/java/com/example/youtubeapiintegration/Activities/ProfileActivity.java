@@ -139,7 +139,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
             case R.id.nav_settings:
                 Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
-                startActivityForResult(intent, 0);
+                startActivity(intent);
                 break;
 
             case R.id.logout:
@@ -207,7 +207,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
                     Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
                     searchIntent.putExtra("queryParam", query);
-                    startActivity(searchIntent);
+                    startActivityForResult(searchIntent, 0);
                     overridePendingTransition(R.anim.profile_activity_in, R.anim.profile_activity_out);
                 }
                 return true;
