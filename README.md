@@ -4,16 +4,16 @@ Following the authentication of an authorized user through a YouTube.Builder cli
 ![YouTube Data API Integration](app/src/main/res/drawable/youtubeapithumbnail.jpg?raw=true "YouTube Data API Integration")
 
 ## Technologies Used
-* [x] Circle Image View by @hdodenhof
-* [x] Custom Google Sign-In Button by @shobhitpuri
-* [x] Google Play Services Libraries
-* [x] Gson
-* [x] Jackson
-* [x] Joda-Time
-* [x] Kotlin
-* [x] OAuth2
-* [x] Picasso
-* [x] Retrofit
-* [x] YouTube Data API V3 Java Client
+* **Circle Image View by @hdodenhof** - 
+* **Custom Google Sign-In Button by @shobhitpuri** -
+* **Google Play Services Libraries** -
+* **Gson** -
+* **Jackson** - 
+* **Joda-Time** -
+* **Kotlin** -
+* **OAuth2** -
+* **Picasso** -
+* **Retrofit** -
+* **YouTube Data API V3 Java Client** -
 
 
