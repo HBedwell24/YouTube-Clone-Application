@@ -6,6 +6,6 @@ class Credentials {
         get() = API_KEY
 
     companion object {
-        private val API_KEY = "AIzaSyAMNlAD282VO9nlkd7bjeDakYq1ndxIYpA"
+        private val API_KEY = ""
     }
 }
