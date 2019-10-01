@@ -13,6 +13,8 @@ import com.example.youtubeapiintegration.SharedPref;
 public class SettingsActivity extends AppCompatActivity {
 
     SharedPref sharedPref;
+    String profileTheme;
+    String settingsTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
