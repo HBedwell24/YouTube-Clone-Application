@@ -44,6 +44,7 @@
 
         <activity
             android:name=".Activities.AuthenticationActivity"
+            android:launchMode="singleTop"
             android:theme="@style/SplashTheme" />
 
         <activity android:name="net.openid.appauth.RedirectUriReceiverActivity">

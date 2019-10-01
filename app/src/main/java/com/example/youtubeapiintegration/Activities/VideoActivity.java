@@ -277,11 +277,11 @@ public class VideoActivity extends YouTubeBaseActivity implements YouTubePlayer.
                             setUpCommentsRecyclerView(response.body().getItems());
                         }
                         else {
-                            Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
+                            commentsSize.setText("Comments have been disabled for this video.");
                         }
                     } else {
                         //swipeRefreshLayout.setRefreshing(true);
-                        Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
+                        commentsSize.setText("Comments have been disabled for this video.");
                     }
                 }
 

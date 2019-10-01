@@ -52,17 +52,23 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     private SearchView searchView;
     private Toolbar toolbar;
-    private boolean onBackPressed = false;
+    private boolean onBackPressed;
+    private String profileTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        onBackPressed = false;
         SharedPref sharedPref = new SharedPref(this);
 
         if (sharedPref.loadNightModeState()) {
             setTheme(R.style.DarkTheme);
-        } else {
+            profileTheme = "Dark";
+        }
+
+        else {
             setTheme(R.style.ProfileTheme);
+            profileTheme = "Light";
         }
 
         super.onCreate(savedInstanceState);

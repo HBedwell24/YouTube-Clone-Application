@@ -9,11 +9,18 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_pic"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:src="@drawable/user" />
+
+    <TextView
+        android:id="@+id/subHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_background"
-        />
-<!--    TODO: commit the file @drawable/user if needed-->
+        android:paddingTop="8dp"
+        android:text="Account:"
+        android:textStyle="bold"
+        android:textColor="?attr/toolbarTextColor" />
 
     <TextView
         android:id="@+id/email"
