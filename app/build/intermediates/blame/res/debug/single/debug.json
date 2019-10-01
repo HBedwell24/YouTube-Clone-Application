@@ -2284,6 +2284,10 @@
         "source": "C:\\Users\\bagge\\.gradle\\caches\\transforms-2\\files-2.1\\4d1f6b722bcca565d39432cca0397fcf\\res\\drawable-xxxhdpi-v4\\quantum_ic_volume_up_grey600_36.png"
     },
     {
+        "merged": "C:\\Users\\bagge\\YoutubeAPIIntegration\\app\\build\\intermediates\\res\\merged\\debug\\drawable_youtube_api_thumbnail.jpg.flat",
+        "source": "C:\\Users\\bagge\\YoutubeAPIIntegration\\app\\src\\main\\res\\drawable\\youtube_api_thumbnail.jpg"
+    },
+    {
         "merged": "C:\\Users\\bagge\\YoutubeAPIIntegration\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_quantum_ic_play_circle_filled_white_36.png.flat",
         "source": "C:\\Users\\bagge\\.gradle\\caches\\transforms-2\\files-2.1\\4d1f6b722bcca565d39432cca0397fcf\\res\\drawable-mdpi-v4\\quantum_ic_play_circle_filled_white_36.png"
     },
@@ -2890,10 +2894,6 @@
     {
         "merged": "C:\\Users\\bagge\\YoutubeAPIIntegration\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi-v4_btn_google_signin_light_focus.9.png.flat",
         "source": "C:\\Users\\bagge\\.gradle\\caches\\transforms-2\\files-2.1\\c63cdc669b76e7d90433c4dee57b2510\\res\\drawable-xxxhdpi-v4\\btn_google_signin_light_focus.9.png"
-    },
-    {
-        "merged": "C:\\Users\\bagge\\YoutubeAPIIntegration\\app\\build\\intermediates\\res\\merged\\debug\\drawable_youtubeapithumbnail.jpg.flat",
-        "source": "C:\\Users\\bagge\\YoutubeAPIIntegration\\app\\src\\main\\res\\drawable\\youtubeapithumbnail.jpg"
     },
     {
         "merged": "C:\\Users\\bagge\\YoutubeAPIIntegration\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_abc_text_select_handle_right_mtrl_light.png.flat",

@@ -462,21 +462,21 @@ public final class R {
         public static final int start_text = 0x7f090188;
         public static final int status_text = 0x7f09018a;
         public static final int strict_sandbox = 0x7f09018c;
-        public static final int subtitle_view = 0x7f09018f;
-        public static final int tab_host = 0x7f090194;
-        public static final int terrain = 0x7f09019d;
-        public static final int test = 0x7f09019e;
-        public static final int text = 0x7f09019f;
-        public static final int text1 = 0x7f0901a0;
-        public static final int text2 = 0x7f0901a1;
-        public static final int textTitle = 0x7f0901a5;
-        public static final int text_list_view = 0x7f0901a7;
-        public static final int thing_proto = 0x7f0901ab;
-        public static final int title_view = 0x7f0901b1;
-        public static final int toolbar = 0x7f0901b2;
-        public static final int url = 0x7f0901c0;
-        public static final int wide = 0x7f0901ca;
-        public static final int wrap_content = 0x7f0901cd;
+        public static final int subtitle_view = 0x7f090190;
+        public static final int tab_host = 0x7f090195;
+        public static final int terrain = 0x7f09019e;
+        public static final int test = 0x7f09019f;
+        public static final int text = 0x7f0901a0;
+        public static final int text1 = 0x7f0901a1;
+        public static final int text2 = 0x7f0901a2;
+        public static final int textTitle = 0x7f0901a6;
+        public static final int text_list_view = 0x7f0901a8;
+        public static final int thing_proto = 0x7f0901ac;
+        public static final int title_view = 0x7f0901b2;
+        public static final int toolbar = 0x7f0901b3;
+        public static final int url = 0x7f0901c1;
+        public static final int wide = 0x7f0901cb;
+        public static final int wrap_content = 0x7f0901ce;
     }
     public static final class integer {
         private integer() {}

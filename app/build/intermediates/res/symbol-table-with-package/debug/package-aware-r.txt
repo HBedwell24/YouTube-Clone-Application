@@ -1730,7 +1730,7 @@ drawable splash_background
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 drawable user
-drawable youtubeapithumbnail
+drawable youtube_api_thumbnail
 id ALT
 id CTRL
 id FUNCTION
@@ -2128,6 +2128,7 @@ id status_bar_latest_event_content
 id status_text
 id stretch
 id strict_sandbox
+id subHeader
 id submenuarrow
 id submit_area
 id subtitle_view
