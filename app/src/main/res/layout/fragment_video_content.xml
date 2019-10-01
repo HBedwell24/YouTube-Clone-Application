@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/videoTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="0.87"
+        android:fontFamily="sans-serif"
+        android:text="Video Title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textColor="?attr/textColor"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/views"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:alpha="0.60"
+        android:gravity="center"
+        android:text="Views"
+        android:textColor="?attr/textColor" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/likes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="34dp"
+            android:layout_weight="1"
+            android:alpha="0.60"
+            android:drawableTop="@drawable/ic_thumb_up_black_24dp"
+            android:drawablePadding="8dp"
+            android:gravity="center_horizontal"
+            android:text="Likes"
+            android:textColor="?attr/textColor" />
+
+        <TextView
+            android:id="@+id/dislikes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:alpha="0.60"
+            android:drawableTop="@drawable/ic_thumb_down_black_24dp"
+            android:drawablePadding="8dp"
+            android:gravity="center_horizontal"
+            android:text="Dislikes"
+            android:textColor="?attr/textColor" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/descriptionDropDown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:alpha="0.60"
+        android:clickable="true"
+        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+        android:text="Description"
+        android:textColor="?attr/textColor" />
+
+    <TextView
+        android:id="@+id/videoDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:alpha="0.60"
+        android:text="Text"
+        android:textColor="?attr/textColor"
+        android:visibility="gone" />
+
+</LinearLayout>
+
+<View
+android:layout_width="match_parent"
+android:layout_height="1dp"
+android:alpha="0.38"
+android:background="?attr/textColor" />
+
+<TextView
+android:id="@+id/comments"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_margin="16dp"
+android:alpha="0.60"
+android:text="Comments"
+android:textColor="?attr/textColor" />
+
+<View
+android:layout_width="match_parent"
+android:layout_height="1dp"
+android:alpha="0.38"
+android:background="?attr/textColor" />
+
+<ScrollView
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
+
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/commentsRecyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical" />
+
+</ScrollView>
+
+    </LinearLayout>

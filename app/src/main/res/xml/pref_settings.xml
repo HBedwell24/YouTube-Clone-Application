@@ -1,0 +1,15 @@
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="clearHistory"
+        android:summary="Remove search records specific to this application from your local device."
+        android:title="Clear Cookies"
+        android:layout="@layout/preference_row_item" />
+
+    <SwitchPreference
+        android:key="darkTheme"
+        android:title="Dark Theme"
+        android:defaultValue="false"
+        android:layout="@layout/preference_switch_row_item"/>
+
+</androidx.preference.PreferenceScreen>
