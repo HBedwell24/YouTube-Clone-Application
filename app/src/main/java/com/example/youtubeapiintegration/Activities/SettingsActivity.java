@@ -5,16 +5,14 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-// TODO: commit SettingsFragment class
-//import com.example.youtubeapiintegration.Fragments.SettingsFragment;
+
+import com.example.youtubeapiintegration.Fragments.SettingsFragment;
 import com.example.youtubeapiintegration.R;
 import com.example.youtubeapiintegration.SharedPref;
 
 public class SettingsActivity extends AppCompatActivity {
 
     SharedPref sharedPref;
-    String profileTheme;
-    String settingsTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +35,8 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-        //        new SettingsFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                new SettingsFragment()).commit();
     }
 
     @Override
